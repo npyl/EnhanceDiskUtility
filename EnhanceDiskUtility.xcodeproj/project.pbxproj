@@ -6,9 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		77274C5B1EF6BAB000243954 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77274C5A1EF6BAB000243954 /* LICENSE */; };
+		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; };
+		77DB43721EF47ADD00B1067C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DB43711EF47ADD00B1067C /* main.m */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		77DB43681EF47AC800B1067C /* EnhanceDiskUtility.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EnhanceDiskUtility.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		77274C5A1EF6BAB000243954 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ZKSwizzle/LICENSE; sourceTree = "<group>"; };
+		775420F91EF568AF0071FBEB /* ZKSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKSwizzle.h; path = ZKSwizzle/ZKSwizzle.h; sourceTree = "<group>"; };
+		775420FA1EF568AF0071FBEB /* ZKSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKSwizzle.m; path = ZKSwizzle/ZKSwizzle.m; sourceTree = "<group>"; };
+		77DB43681EF47AC800B1067C /* EnhanceDiskUtility.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EnhanceDiskUtility.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		77DB436B1EF47AC800B1067C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		77DB43711EF47ADD00B1067C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		77DB43731EF47E7600B1067C /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,7 +44,7 @@
 		77DB43691EF47AC800B1067C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				77DB43681EF47AC800B1067C /* EnhanceDiskUtility.framework */,
+				77DB43681EF47AC800B1067C /* EnhanceDiskUtility.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -41,7 +52,12 @@
 		77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */ = {
 			isa = PBXGroup;
 			children = (
+				77274C5A1EF6BAB000243954 /* LICENSE */,
+				775420F91EF568AF0071FBEB /* ZKSwizzle.h */,
+				775420FA1EF568AF0071FBEB /* ZKSwizzle.m */,
 				77DB436B1EF47AC800B1067C /* Info.plist */,
+				77DB43731EF47E7600B1067C /* main.h */,
+				77DB43711EF47ADD00B1067C /* main.m */,
 			);
 			path = EnhanceDiskUtility;
 			sourceTree = "<group>";
@@ -63,7 +79,7 @@
 			);
 			name = EnhanceDiskUtility;
 			productName = EnhanceDiskUtility;
-			productReference = 77DB43681EF47AC800B1067C /* EnhanceDiskUtility.framework */;
+			productReference = 77DB43681EF47AC800B1067C /* EnhanceDiskUtility.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -103,6 +119,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77274C5B1EF6BAB000243954 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +130,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77DB43721EF47ADD00B1067C /* main.m in Sources */,
+				775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,26 +230,28 @@
 		77DB436F1EF47AC800B1067C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = EnhanceDiskUtility/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = ulcheats.EnhanceDiskUtility;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = framework;
+				WRAPPER_EXTENSION = bundle;
 			};
 			name = Debug;
 		};
 		77DB43701EF47AC800B1067C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = EnhanceDiskUtility/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = ulcheats.EnhanceDiskUtility;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = framework;
+				WRAPPER_EXTENSION = bundle;
 			};
 			name = Release;
 		};
@@ -253,6 +274,7 @@
 				77DB43701EF47AC800B1067C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

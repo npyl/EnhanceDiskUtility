@@ -2,6 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>SIMBLTargetApplications</key>
+	<array>
+		<dict>
+			<key>MinBundleVersion</key>
+			<string>1579.1</string>
+			<key>MaxBundleVersion</key>
+			<string>1579.1</string>
+			<key>BundleIdentifier</key>
+			<string>com.apple.DiskUtility</string>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -21,6 +32,6 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2017 ulcheats. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
-	<string></string>
+	<string>CoreClass</string>
 </dict>
 </plist>
