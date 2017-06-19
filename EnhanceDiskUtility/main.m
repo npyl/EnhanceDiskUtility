@@ -94,6 +94,11 @@ NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissions
 
 @implementation DUEnhance : NSObject
 
+- (void) taskFinished:(NSNotification *)note
+{
+    NSLog( @"Yeah it finished!" );
+}
+
 - (void)VerifyPermissions:(id)sender
 {
     NSLog( @"Told to verify permissions" );
@@ -119,15 +124,13 @@ NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissions
         
         NSAlert *alert = [[[NSAlert alloc] init] autorelease];
         [alert addButtonWithTitle:@"OK"];
-        [alert setMessageText:@"Failed to repair Permissions!"];
-        [alert setInformativeText:@"System Integrity Protection is enabled! Please disable it!"];
-        [alert setAlertStyle:NSAlertStyleCritical];
+        [alert setMessageText:@"Warning! System Integrity Protection has enabled File System Protection!"];
+        [alert setInformativeText:@"File System Protection ( as part of System Integrity Protection ) is enabled! Some permissions may not be repaired!"];
+        [alert setAlertStyle:NSAlertStyleWarning];
         
         [alert beginSheetModalForWindow:windowHandle completionHandler:^(NSModalResponse returnCode) {}];
         
         /* ** TODO ** does alert get autoreleased?? */
-        
-        return;
     }
     
     // run wolf's repair permissions app.
@@ -173,7 +176,7 @@ NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissions
         // you will likely want to localize many of the item's properties
         
         
-        //[toolbarItem setToolTip:@"Save Your Document"];
+        //[toolbarItem setToolTip:@"Save Your Document"];        // ** TODO ** Investigate what this does
         
         
         [toolbarItem setImage:[NSImage imageNamed:NSImageNameMenuOnStateTemplate]];
@@ -192,16 +195,11 @@ NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissions
     return toolbarItem;
 }
 
-- (void) taskFinished:(NSNotification *)note
-{
-    NSLog( @"Yeah it finished!" );
-}
-
 - (void)revalidateToolbar
 {
     NSLog( @"Got access to the SUToolbarController" );
     
-    ZKOrig(void);
+    ZKOrig(void);   // ** TODO ** Check if this actually does work
     
     if( !gotSUWorkspaceViewControllerHandle )
     {

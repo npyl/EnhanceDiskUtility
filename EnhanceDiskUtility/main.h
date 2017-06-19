@@ -18,7 +18,9 @@
 - (IBAction)VerifyPermissions:(id)sender;
 - (IBAction)RepairPermissions:(id)sender;
 
-- (void)revalidateToolbar;           /* Overrides the default function present in DiskUtilty code. */
+- (void)revalidateToolbar;           /* Overrides the default function present in DiskUtilty code
+                                            by swizzling DUEnhance class into the SUToolbarController
+                                      */
 
 @end
 
