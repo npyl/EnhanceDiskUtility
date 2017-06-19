@@ -9,6 +9,10 @@
 #ifndef main_h
 #define main_h
 
+@import Foundation;
+@import Cocoa;
+@import AppKit;
+
 @interface DUEnhance : NSObject
 
 - (IBAction)VerifyPermissions:(id)sender;

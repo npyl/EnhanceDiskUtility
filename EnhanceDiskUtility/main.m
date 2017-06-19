@@ -14,8 +14,23 @@
 //  https://github.com/Piker-Alpha/csrstat/blob/master/csrstat.c
 //
 
-@import Foundation;
-@import AppKit;
+//
+//  For verify / repair permissions I use FireWolf's utility
+//
+//  THANK YOU VERY MUCH FIREWOLF
+//
+//  https://www.firewolf.science/2016/07/repairpermissions-v3-now-supports-repairing-permissions-on-macos-sierra/
+//
+
+/*  TODO:
+ *      1) replace NSLog with DUEnhanceLog ( which will be a function that will call NSLog only if Debug Mode is enabled. )
+ *      2) fix a bug, that when we try to customise the toolbar, it doesnt show the original choices Disk Utility shows.
+ *          PROBABLY need to add the other functions such as - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
+ *                                          - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar
+ *                                          - (void)toolbarWillAddItem:(NSNotification *)notification
+ *
+ *              checkout http://cocoadevcentral.com/articles/000037.php
+ */
 
 #import "main.h"
 #import "ZKSwizzle.h"
@@ -71,21 +86,20 @@ char * _csr_check(aMask, aFlipflag)
         return("enabled");
     }
     
-    return("\33[1mdisabled\33[0m");
+    return("\33[1mdis    abled\33[0m");
 }
+
+NSString * const kNSToolbarVerifyPermissionsItemIdentifier = @"VerifyPermissionsItemIdentifier";
+NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissionsItemIdentifier";
 
 @implementation DUEnhance : NSObject
 
-- (IBAction)VerifyPermissions:(id)sender
+- (void)VerifyPermissions:(id)sender
 {
     NSLog( @"Told to verify permissions" );
 }
 
-- (void)alertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
-{
-}
-
-- (IBAction)RepairPermissions:(id)sender
+- (void)RepairPermissions:(id)sender
 {
     NSLog( @"Told to repair permissions!" );
     
@@ -99,7 +113,7 @@ char * _csr_check(aMask, aFlipflag)
     // Note: Apple is no longer using 0x67 but 0x77 for csrutil disabled!!!
     //
     
-    if( strcmp( _csr_check(CSR_ALLOW_UNRESTRICTED_FS, 0), "disabled" ) != 0 )
+    if( strcmp( _csr_check(CSR_ALLOW_UNRESTRICTED_FS, 0), "enabled" ) == 0 )
     {
         NSWindow * windowHandle = ZKHookIvar( self, NSWindow*, "_attachedToWindow" );
         
@@ -116,8 +130,71 @@ char * _csr_check(aMask, aFlipflag)
         return;
     }
     
-    // if disabled run Permissions repair
-    // if enabled stop, print alert and stop.
+    // run wolf's repair permissions app.
+}
+
+- (NSToolbarItem *) toolbar:(NSToolbar *)toolbar
+      itemForItemIdentifier:(NSString *)itemIdentifier
+  willBeInsertedIntoToolbar:(BOOL)flag
+{
+    NSToolbarItem *toolbarItem = [[[NSToolbarItem alloc] initWithItemIdentifier: itemIdentifier] autorelease];
+    
+    if ([itemIdentifier isEqual: kNSToolbarVerifyPermissionsItemIdentifier]) {
+        NSLog( @"Got REPPERM item identifier" );
+        
+        // Set the text label to be displayed in the
+        // toolbar and customization palette
+        
+        [toolbarItem setLabel:@"Verify Permissions"];
+        [toolbarItem setPaletteLabel:@"Verify Permissions"];
+        
+        // Set up a reasonable tooltip, and image
+        // you will likely want to localize many of the item's properties
+        
+        
+        
+        //[toolbarItem setToolTip:@"Save Your Document"];       // ** TODO ** Investigate what this does.
+        
+        
+        [toolbarItem setImage:[NSImage imageNamed:NSImageNameSmartBadgeTemplate]];
+        
+        // Tell the item what message to send when it is clicked
+        [ toolbarItem setTarget:self ];
+        [ toolbarItem setAction:@selector(VerifyPermissions:) ];
+    } else if ([itemIdentifier isEqual: kNSToolbarRepairPermissionsItemIdentifier])  {
+        NSLog( @"Got VERPERM item identifier" );
+        
+        // Set the text label to be displayed in the
+        // toolbar and customization palette
+        [toolbarItem setLabel:@"Repair Permissions"];
+        [toolbarItem setPaletteLabel:@"Repair Permissions"];
+        
+        // Set up a reasonable tooltip, and image
+        // you will likely want to localize many of the item's properties
+        
+        
+        //[toolbarItem setToolTip:@"Save Your Document"];
+        
+        
+        [toolbarItem setImage:[NSImage imageNamed:NSImageNameMenuOnStateTemplate]];
+        
+        // Tell the item what message to send when it is clicked
+        [toolbarItem setTarget:self];
+        [toolbarItem setAction:@selector(RepairPermissions:)];
+    }
+    else {
+        // we need to call the default
+        NSLog( @"Going for default" );
+        
+        // ** TODO ** FIXME
+        // What do we need here so that this block is complete???
+    }
+    return toolbarItem;
+}
+
+- (void) taskFinished:(NSNotification *)note
+{
+    NSLog( @"Yeah it finished!" );
 }
 
 - (void)revalidateToolbar
@@ -132,19 +209,29 @@ char * _csr_check(aMask, aFlipflag)
 
         NSToolbar * toolbarHandle = ZKHookIvar( self, NSToolbar*, "_toolbar" );
 
+        gotSUWorkspaceViewControllerHandle = true;      // set the flag so that we dont ask again.
+                                                        // if we find out later that getting the handle failed, we don't worry
+                                                        //      Disk Utility will work without the Verify / Repair Permissions addon.
+        
         if( !toolbarHandle )
         {
             NSLog( @"DUEnhance HACK: Failed to get toolbarHandle" );
             
-            /* **** TODO **** Handle error somehow */
-            return;
+            NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+            [alert addButtonWithTitle:@"OK"];
+            [alert setMessageText:@"Failed to get toolbar handle!"];
+            [alert setInformativeText:@"Disk Utility will work without the Verify/Repair Permissions addon"];
+            [alert setAlertStyle:NSAlertStyleCritical];
+            [alert runModal];
+            
+
+            return;                                     // break the code, DONT reach to [toolbar insert...blabla]
         }
 
         /* Here we inject the buttons */
         
-        [self RepairPermissions:nil];
-        
-        gotSUWorkspaceViewControllerHandle = true;
+        [toolbarHandle insertItemWithItemIdentifier:kNSToolbarVerifyPermissionsItemIdentifier atIndex:7];
+        [toolbarHandle insertItemWithItemIdentifier:kNSToolbarRepairPermissionsItemIdentifier atIndex:8];
     }
 }
 
