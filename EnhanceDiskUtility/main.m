@@ -24,7 +24,8 @@
 
 /*  TODO:
  *      1) replace NSLog with DUEnhanceLog ( which will be a function that will call NSLog only if Debug Mode is enabled. )
- *      2) fix a bug, that when we try to customise the toolbar, it doesnt show the original choices Disk Utility shows.
+ *      
+ *      2) [ FIXED ] fix a bug, that when we try to customise the toolbar, it doesnt show the original choices Disk Utility shows.
  *          PROBABLY need to add the other functions such as - (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
  *                                          - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar
  *                                          - (void)toolbarWillAddItem:(NSNotification *)notification
@@ -134,6 +135,7 @@ NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissions
     }
     
     // run wolf's repair permissions app.
+    
 }
 
 - (NSToolbarItem *) toolbar:(NSToolbar *)toolbar
@@ -189,8 +191,9 @@ NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissions
         // we need to call the default
         NSLog( @"Going for default" );
         
-        // ** TODO ** FIXME
+        // ** TODO ** FIXME --- Guess its fixed.
         // What do we need here so that this block is complete???
+        toolbarItem = ZKOrig( NSToolbarItem*, toolbar, itemIdentifier, YES);
     }
     return toolbarItem;
 }
