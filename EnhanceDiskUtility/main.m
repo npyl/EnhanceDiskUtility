@@ -151,15 +151,6 @@ void DUELog( NSString * str )
     
 }
 
-/*
-- (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)toolbar
-{
-    return [NSArray arrayWithObjects:
-            kGeneralPrefsIdentifier,
-            kAppearancePrefsIdentifer,
-            nil];
-} */
-
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar      /* Overrides the default function */
 {
     NSMutableArray * toolbarDefaultItemIdentifiers = [NSMutableArray arrayWithArray: ZKOrig( NSArray*, toolbar )];
@@ -183,7 +174,6 @@ void DUELog( NSString * str )
         DUELog( @"Got VERPERM item identifier" );
         
         return verifyPermissionsItem;
-    
     } else if ( [itemIdentifier isEqual: kNSToolbarRepairPermissionsItemIdentifier] )  {
         DUELog( @"Got REPPERM item identifier" );
         
@@ -201,6 +191,10 @@ void DUELog( NSString * str )
 
 -(void) createVerifyRepairPermissionsToolbarItems
 {
+    /* ** TODO ** Can have autorelease here?? 
+        NO because when they get removed and then again put it crashes...
+     */
+    
     verifyPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier: kNSToolbarVerifyPermissionsItemIdentifier];
     repairPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier: kNSToolbarRepairPermissionsItemIdentifier];
         
