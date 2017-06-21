@@ -15,10 +15,10 @@
 
 @interface DUEnhance : NSObject
 
-- (void)revalidateToolbar;           /* Overrides the default function present in DiskUtilty code
-                                            by swizzling DUEnhance class into the SUToolbarController
-                                      */
-
+- (void)revalidateToolbar;                                                  /*
+                                                                             *  Overrides the default function present in DiskUtilty code
+                                                                             *      by swizzling DUEnhance class into the SUToolbarController
+                                                                             */
 @end
 
 @interface CoreClass : NSObject

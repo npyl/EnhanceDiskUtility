@@ -7,6 +7,12 @@
 //
 
 //
+//  This project uses the private framework StorageKit.framework ( located in /System/Library/PrivateFrameworks )
+//  I used a utility to dump the class SKDisk and put it in a header file called StorageKit.h because I need it for the Verify / Repair
+//      permissions functions.
+//
+
+//
 //  For checking the SIP status got code from Piker Alpha's repo in github
 //
 //  THANK YOU VERY MUCH PIKER ALPHA
@@ -27,14 +33,16 @@
  *
  *              checkout http://cocoadevcentral.com/articles/000037.php
  *
- *      3)  FIX a bug that, when we hit customise, and paste the default bar of items, the Verify / Repair Buttons disappear.
  *      4)  Check if ZKOrig functions actually work.
  *      ** TODO ** Check if this code works for cases when some are not visible
+ *      ** TODO ** We need to deallocate the repair / verify toolbar item identifiers some time
  *
  */
 
 #import "main.h"
 #import "ZKSwizzle.h"
+
+#import "StorageKit.h"
 
 #define DUE_DEBUG
 
@@ -95,6 +103,9 @@ char * _csr_check(aMask, aFlipflag)
 NSString * const kNSToolbarVerifyPermissionsItemIdentifier = @"VerifyPermissionsItemIdentifier";
 NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissionsItemIdentifier";
 
+NSToolbarItem *verifyPermissionsItem = nil;
+NSToolbarItem *repairPermissionsItem = nil;
+
 void DUELog( NSString * str )
 {
     #ifdef DUE_DEBUG
@@ -140,40 +151,70 @@ void DUELog( NSString * str )
     
 }
 
-- (NSToolbarItem *) toolbar:(NSToolbar *)toolbar
-      itemForItemIdentifier:(NSString *)itemIdentifier
-  willBeInsertedIntoToolbar:(BOOL)flag
+/*
+- (NSArray *)toolbarSelectableItemIdentifiers:(NSToolbar *)toolbar
 {
-    NSToolbarItem *toolbarItem = [[[NSToolbarItem alloc] initWithItemIdentifier: itemIdentifier] autorelease];
+    return [NSArray arrayWithObjects:
+            kGeneralPrefsIdentifier,
+            kAppearancePrefsIdentifer,
+            nil];
+} */
+
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar      /* Overrides the default function */
+{
+    NSMutableArray * toolbarDefaultItemIdentifiers = [NSMutableArray arrayWithArray: ZKOrig( NSArray*, toolbar )];
     
+    //
+    //  Now patch a bit the array to add our buttons, too!
+    //
+    
+    [toolbarDefaultItemIdentifiers setObject:kNSToolbarVerifyPermissionsItemIdentifier atIndexedSubscript:( [toolbarDefaultItemIdentifiers count] - 1 )];
+    [toolbarDefaultItemIdentifiers addObject:kNSToolbarRepairPermissionsItemIdentifier];
+    [toolbarDefaultItemIdentifiers addObject:NSToolbarFlexibleSpaceItemIdentifier];
+    
+    return toolbarDefaultItemIdentifiers;
+}
+
+- (NSToolbarItem *) toolbar:(NSToolbar *)toolbar
+                        itemForItemIdentifier:(NSString *)itemIdentifier
+                        willBeInsertedIntoToolbar:(BOOL)flag
+{
     if ( [itemIdentifier isEqual: kNSToolbarVerifyPermissionsItemIdentifier] ) {
-        DUELog( @"Got REPPERM item identifier" );
-        
-        [toolbarItem setLabel:@"Verify Permissions"];
-        [toolbarItem setPaletteLabel:@"Verify Permissions"];        // ** TODO ** what does this do?
-        [toolbarItem setImage:[NSImage imageNamed:NSImageNameSmartBadgeTemplate]];
-        [toolbarItem setTarget:self];
-        [toolbarItem setAction:@selector(VerifyPermissions:)];
-    
-    } else if ( [itemIdentifier isEqual: kNSToolbarRepairPermissionsItemIdentifier] )  {
         DUELog( @"Got VERPERM item identifier" );
         
-        [toolbarItem setLabel:@"Repair Permissions"];
-        [toolbarItem setPaletteLabel:@"Repair Permissions"];    // ** TODO ** what does this do?
-        [toolbarItem setImage:[NSImage imageNamed:NSImageNameMenuOnStateTemplate]];
-        [toolbarItem setTarget:self];
-        [toolbarItem setAction:@selector(RepairPermissions:)];
+        return verifyPermissionsItem;
+    
+    } else if ( [itemIdentifier isEqual: kNSToolbarRepairPermissionsItemIdentifier] )  {
+        DUELog( @"Got REPPERM item identifier" );
+        
+        return repairPermissionsItem;
     }
     else {
         //
         //  we need to call the default implementation
         //
         
-        toolbarItem = ZKOrig( NSToolbarItem*, toolbar, itemIdentifier, YES);                // ** TODO ** FIXME --- Guess its fixed.
+        return ZKOrig( NSToolbarItem*, toolbar, itemIdentifier, YES);                       // ** TODO ** FIXME --- Guess its fixed.
                                                                                             // What do we need here so that this block is complete???
     }
+}
+
+-(void) createVerifyRepairPermissionsToolbarItems
+{
+    verifyPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier: kNSToolbarVerifyPermissionsItemIdentifier];
+    repairPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier: kNSToolbarRepairPermissionsItemIdentifier];
+        
+    [verifyPermissionsItem setLabel:@"Verify Permissions"];
+    [verifyPermissionsItem setPaletteLabel:@"Verify Permissions"];        // ** TODO ** what does this do?
+    [verifyPermissionsItem setImage:[NSImage imageNamed:NSImageNameSmartBadgeTemplate]];
+    [verifyPermissionsItem setTarget:self];
+    [verifyPermissionsItem setAction:@selector(VerifyPermissions:)];
     
-    return toolbarItem;
+    [repairPermissionsItem setLabel:@"Repair Permissions"];
+    [repairPermissionsItem setPaletteLabel:@"Repair Permissions"];    // ** TODO ** what does this do?
+    [repairPermissionsItem setImage:[NSImage imageNamed:NSImageNameMenuOnStateTemplate]];
+    [repairPermissionsItem setTarget:self];
+    [repairPermissionsItem setAction:@selector(RepairPermissions:)];
 }
 
 - (void)revalidateToolbar
@@ -222,7 +263,7 @@ void DUELog( NSString * str )
             const NSUInteger repairPermissionsItemIndex = verifyPermissionsItemIndex + 1;
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                /* ** TODO ** Need to check for errors in inserting ?? */
+                [self createVerifyRepairPermissionsToolbarItems];
                 
                 [toolbarHandle insertItemWithItemIdentifier:kNSToolbarVerifyPermissionsItemIdentifier atIndex:verifyPermissionsItemIndex];
                 [toolbarHandle insertItemWithItemIdentifier:kNSToolbarRepairPermissionsItemIdentifier atIndex:repairPermissionsItemIndex];

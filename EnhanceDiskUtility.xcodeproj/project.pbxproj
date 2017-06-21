@@ -10,6 +10,7 @@
 		77274C5B1EF6BAB000243954 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77274C5A1EF6BAB000243954 /* LICENSE */; };
 		77274C611EF6D50300243954 /* RepairPermissions in Resources */ = {isa = PBXBuildFile; fileRef = 77274C601EF6D50300243954 /* RepairPermissions */; };
 		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; };
+		776253E81EFB01C90070463D /* StorageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 776253E71EFB01C90070463D /* StorageKit.framework */; };
 		77DB43721EF47ADD00B1067C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DB43711EF47ADD00B1067C /* main.m */; };
 /* End PBXBuildFile section */
 
@@ -18,6 +19,8 @@
 		77274C601EF6D50300243954 /* RepairPermissions */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = RepairPermissions; path = FireWolf/RepairPermissions; sourceTree = "<group>"; };
 		775420F91EF568AF0071FBEB /* ZKSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKSwizzle.h; path = ZKSwizzle/ZKSwizzle.h; sourceTree = "<group>"; };
 		775420FA1EF568AF0071FBEB /* ZKSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKSwizzle.m; path = ZKSwizzle/ZKSwizzle.m; sourceTree = "<group>"; };
+		776253E51EFB01520070463D /* StorageKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageKit.h; sourceTree = "<group>"; };
+		776253E71EFB01C90070463D /* StorageKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StorageKit.framework; path = ../../../../System/Library/PrivateFrameworks/StorageKit.framework; sourceTree = "<group>"; };
 		77DB43681EF47AC800B1067C /* EnhanceDiskUtility.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EnhanceDiskUtility.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		77DB436B1EF47AC800B1067C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		77DB43711EF47ADD00B1067C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -29,6 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				776253E81EFB01C90070463D /* StorageKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,11 +57,20 @@
 			name = "FireWolf's Repair Permissions";
 			sourceTree = "<group>";
 		};
+		776253E61EFB01C90070463D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				776253E71EFB01C90070463D /* StorageKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		77DB435F1EF47AC800B1067C = {
 			isa = PBXGroup;
 			children = (
 				77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */,
 				77DB43691EF47AC800B1067C /* Products */,
+				776253E61EFB01C90070463D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -75,6 +88,7 @@
 				77274C5F1EF6D4A200243954 /* FireWolf's Repair Permissions */,
 				77274C5E1EF6D49000243954 /* ZKSwizzle */,
 				77DB436B1EF47AC800B1067C /* Info.plist */,
+				776253E51EFB01520070463D /* StorageKit.h */,
 				77DB43731EF47E7600B1067C /* main.h */,
 				77DB43711EF47ADD00B1067C /* main.m */,
 			);
