@@ -39,12 +39,12 @@
  *
  */
 
-#import "StorageKit.h"
 #import "main.h"
-#import "ZKSwizzle.h"
+#import "StorageKit.h"
+#import "ZKSwizzle/ZKSwizzle.h"
+#import "STPrivilegedTask/STPrivilegedTask.h"
 
 #define DUE_DEBUG
-
 
 //
 //  SYSTEM INTEGRITY PROTECTION RELATED
@@ -121,9 +121,43 @@ void DUELog( NSString * str )
 {
     DUELog( @"Told to verify permissions" );
     
-    // ** TODO ** Need to lock the skdisk handle ???
+    // ** TODO ** Need to lock the disk handle ???
     
-    NSString * volumeName = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_volumeName" );
+    NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
+    
+    STPrivilegedTask * repairPermissionsTask = [[STPrivilegedTask alloc] init];
+    
+    NSString * launchPath = @"/Users/develnpyl/";
+    NSLog( @"%@", launchPath );
+    
+    launchPath = [launchPath stringByAppendingString:@"/RepairPermissions"];
+    
+    [repairPermissionsTask setLaunchPath:launchPath];
+    NSArray * arguments = [NSArray arrayWithObjects: @"--output", @"/tmp/RepairPermissions.tmp", @"--verify", @"/", nil ];
+    [repairPermissionsTask setArguments:arguments ];
+    
+    OSStatus err = [repairPermissionsTask launch];
+
+    if (err != errAuthorizationSuccess) {
+        if (err == errAuthorizationCanceled) {
+            NSLog(@"User cancelled");
+        } else {
+            NSLog(@"Something went wrong");
+        }
+    } else {
+        NSLog(@"Task successfully launched");
+        
+    }
+    
+    [repairPermissionsTask waitUntilExit];
+
+    NSFileHandle *readHandle = [ NSFileHandle fileHandleForReadingAtPath:@"/tmp/RepairPermissions.tmp" ];
+    NSData *outputData = [readHandle readDataToEndOfFile];
+    NSString *outputString = [[NSString alloc] initWithData:outputData encoding:NSUTF8StringEncoding];
+    NSLog( @"%@", outputString );
+
+    
+    // ** TODO ** release ???
 }
 
 - (void)RepairPermissions:(id)sender
@@ -176,13 +210,12 @@ void DUELog( NSString * str )
                         itemForItemIdentifier:(NSString *)itemIdentifier
                         willBeInsertedIntoToolbar:(BOOL)flag
 {
-    if ( [itemIdentifier isEqual: kNSToolbarVerifyPermissionsItemIdentifier] ) {
-        DUELog( @"Got VERPERM item identifier" );
-        
+    if ( [itemIdentifier isEqual: kNSToolbarVerifyPermissionsItemIdentifier] )
+    {
         return verifyPermissionsItem;
-    } else if ( [itemIdentifier isEqual: kNSToolbarRepairPermissionsItemIdentifier] )  {
-        DUELog( @"Got REPPERM item identifier" );
-        
+    }
+    else if ( [itemIdentifier isEqual: kNSToolbarRepairPermissionsItemIdentifier] )
+    {
         return repairPermissionsItem;
     }
     else {
@@ -280,7 +313,9 @@ void DUELog( NSString * str )
 {
     DUELog( @"Into current WorkspaceViewController" );
     DUELog( @"Getting current selectedDisk handle :)" );
+    
     globalSelectedDiskHandle = ZKHookIvar( self, SKDisk*, "_disk" );
+    
     ZKOrig(void);
 }
 
