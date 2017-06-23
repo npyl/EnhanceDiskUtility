@@ -9,16 +9,34 @@
 #ifndef main_h
 #define main_h
 
-@import Foundation;
-@import Cocoa;
 @import AppKit;
+
+@interface _due_SUWorkspaceViewController : NSViewController @end
 
 @interface DUEnhance : NSObject
 
-- (void)revalidateToolbar;                                                  /*
-                                                                             *  Overrides the default function present in DiskUtilty code
-                                                                             *      by swizzling DUEnhance class into the SUToolbarController
-                                                                             */
+- (void)VerifyPermissions:(id)sender;
+- (void)RepairPermissions:(id)sender;
+
+//
+//  for toolbar ------------------------------------------------------------------
+//
+
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar;
+
+- (NSToolbarItem *)         toolbar:(NSToolbar *)toolbar
+              itemForItemIdentifier:(NSString *)itemIdentifier
+          willBeInsertedIntoToolbar:(BOOL)flag;
+
+//
+//  see apple's documentation on toolbars to understand
+//  ------------------------------------------------------------------------------
+//
+
+- (void)createVerifyRepairPermissionsToolbarItems;
+
+- (void)revalidateToolbar;                  // override
+
 @end
 
 @interface CoreClass : NSObject

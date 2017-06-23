@@ -39,14 +39,12 @@
  *
  */
 
+#import "StorageKit.h"
 #import "main.h"
 #import "ZKSwizzle.h"
 
-#import "StorageKit.h"
-
 #define DUE_DEBUG
 
-bool gotSUWorkspaceViewControllerHandle = false;
 
 //
 //  SYSTEM INTEGRITY PROTECTION RELATED
@@ -100,11 +98,15 @@ char * _csr_check(aMask, aFlipflag)
     return("\33[1mdis    abled\33[0m");
 }
 
+bool gotSUWorkspaceViewControllerHandle = false;
+
 NSString * const kNSToolbarVerifyPermissionsItemIdentifier = @"VerifyPermissionsItemIdentifier";
 NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissionsItemIdentifier";
 
 NSToolbarItem *verifyPermissionsItem = nil;
 NSToolbarItem *repairPermissionsItem = nil;
+
+SKDisk * globalSelectedDiskHandle = nil;
 
 void DUELog( NSString * str )
 {
@@ -118,6 +120,10 @@ void DUELog( NSString * str )
 - (void)VerifyPermissions:(id)sender
 {
     DUELog( @"Told to verify permissions" );
+    
+    // ** TODO ** Need to lock the skdisk handle ???
+    
+    NSString * volumeName = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_volumeName" );
 }
 
 - (void)RepairPermissions:(id)sender
@@ -189,7 +195,7 @@ void DUELog( NSString * str )
     }
 }
 
--(void) createVerifyRepairPermissionsToolbarItems
+- (void) createVerifyRepairPermissionsToolbarItems
 {
     /* ** TODO ** Can have autorelease here?? 
         NO because when they get removed and then again put it crashes...
@@ -268,12 +274,26 @@ void DUELog( NSString * str )
 
 @end
 
+@implementation _due_SUWorkspaceViewController : NSViewController
+
+- (void)viewDidLoad
+{
+    DUELog( @"Into current WorkspaceViewController" );
+    DUELog( @"Getting current selectedDisk handle :)" );
+    globalSelectedDiskHandle = ZKHookIvar( self, SKDisk*, "_disk" );
+    ZKOrig(void);
+}
+
+@end
+
+
 @implementation CoreClass : NSObject
 
 + (void) load
 {
     DUELog(@"DUEnhance plugin loading");
     
+    ZKSwizzle( _due_SUWorkspaceViewController, SUWorkspaceViewController );
     ZKSwizzle( DUEnhance, SUToolbarController );
 }
 
