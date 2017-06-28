@@ -11,6 +11,8 @@
 //  I used a utility to dump the class SKDisk and put it in a header file called StorageKit.h because I need it for the Verify / Repair
 //      permissions functions.
 //
+//  ARC is disabled
+//
 
 //
 //  For checking the SIP status got code from Piker Alpha's repo in github
@@ -42,7 +44,6 @@
 #import "main.h"
 #import "StorageKit.h"
 #import "ZKSwizzle/ZKSwizzle.h"
-#import "STPrivilegedTask/STPrivilegedTask.h"
 
 #define DUE_DEBUG
 
@@ -115,7 +116,100 @@ void DUELog( NSString * str )
     #endif
 }
 
+
 @implementation DUEnhance : NSObject
+
+
+NSString * const kDUEStandardTempPath = @"/tmp/DUEnhance.tmp";
+
+/* Called when there is some data in the output pipe */
+
+-(void) receivedData:(NSNotification*)aNotification
+
+{
+    NSLog( @"receivedData!" );
+    
+    NSData *data = [[aNotification userInfo] objectForKey:NSFileHandleNotificationDataItem];
+    
+    // If the length of the data is zero, then the task is basically over - there is nothing
+    // more to get from the handle so we may as well shut down.
+    if ([data length])
+    {
+        // Send the data on to the controller; we can't just use +stringWithUTF8String: here
+        // because -[data bytes] is not necessarily a properly terminated string.
+        // -initWithData:encoding: on the other hand checks -[data length]
+        //[controller appendOutput: [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]];
+        NSLog( @"%@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease] );
+    } else {
+        // We're finished here
+        //[self stopProcess];
+    }
+    
+    // we need to schedule the file handle go read more data in the background again.
+    [[aNotification object] readInBackgroundAndNotify];
+}
+
+/* Called when there is some data in the error pipe */
+
+-(void) receivedError:(NSNotification*) rec_not
+{
+    NSLog( @"Received Error Data" );
+
+    NSData *dataOutput=[[rec_not userInfo] objectForKey:NSFileHandleNotificationDataItem];
+    
+    if( !dataOutput)
+        
+        NSLog(@">>>>>>>>>>>>>>Empty Data");
+    
+    [[rec_not object] readInBackgroundAndNotify];
+    
+    //[dataOutput release];
+}
+
+/* Called when the task is complete */
+
+-(void) TaskCompletion:(NSNotification*) rec_not
+
+{
+    NSTask * task = [rec_not object];
+    
+    [task terminate];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleDataAvailableNotification object:[task standardOutput]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleDataAvailableNotification object:[task standardError]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSTaskDidTerminateNotification object:task];
+
+    NSLog( @"%d", [task terminationStatus] );
+    
+    [task release];
+}
+
+- (void) launchApplicationFromPath:(NSString *)launchPath
+                     withArguments:(NSArray *)arguments
+{
+    NSPipe * outputpipe = [[[NSPipe alloc] init] autorelease];
+    NSPipe * errorpipe = [[[NSPipe alloc] init] autorelease];
+
+    NSFileHandle    *output = [outputpipe fileHandleForReading],
+                    *error = [errorpipe fileHandleForReading];
+    
+    NSTask * task = [[[NSTask alloc] init] autorelease];
+    
+    [task setLaunchPath:launchPath];
+    [task setArguments:arguments];
+    [task setStandardOutput:outputpipe];
+    [task setStandardError:errorpipe];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedData:) name: NSFileHandleDataAvailableNotification object:output];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedError:) name: NSFileHandleDataAvailableNotification object:error];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(TaskCompletion:) name: NSTaskDidTerminateNotification object:task];
+
+    //[input writeData:[NSMutableData initWithString:@"test"]];
+    [output readInBackgroundAndNotify];
+    [error readInBackgroundAndNotify];
+    
+    [task launch];
+}
 
 - (void)VerifyPermissions:(id)sender
 {
@@ -125,39 +219,7 @@ void DUELog( NSString * str )
     
     NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
     
-    STPrivilegedTask * repairPermissionsTask = [[STPrivilegedTask alloc] init];
-    
-    NSString * launchPath = @"/Users/develnpyl/";
-    NSLog( @"%@", launchPath );
-    
-    launchPath = [launchPath stringByAppendingString:@"/RepairPermissions"];
-    
-    [repairPermissionsTask setLaunchPath:launchPath];
-    NSArray * arguments = [NSArray arrayWithObjects: @"--output", @"/tmp/RepairPermissions.tmp", @"--verify", @"/", nil ];
-    [repairPermissionsTask setArguments:arguments ];
-    
-    OSStatus err = [repairPermissionsTask launch];
-
-    if (err != errAuthorizationSuccess) {
-        if (err == errAuthorizationCanceled) {
-            NSLog(@"User cancelled");
-        } else {
-            NSLog(@"Something went wrong");
-        }
-    } else {
-        NSLog(@"Task successfully launched");
-        
-    }
-    
-    [repairPermissionsTask waitUntilExit];
-
-    NSFileHandle *readHandle = [ NSFileHandle fileHandleForReadingAtPath:@"/tmp/RepairPermissions.tmp" ];
-    NSData *outputData = [readHandle readDataToEndOfFile];
-    NSString *outputString = [[NSString alloc] initWithData:outputData encoding:NSUTF8StringEncoding];
-    NSLog( @"%@", outputString );
-
-    
-    // ** TODO ** release ???
+    [self launchApplicationFromPath:@"/Users/develnpyl/repair_packages" withArguments:@[ @"--verify", @"--standard-pkgs", mountPoint ] ];
 }
 
 - (void)RepairPermissions:(id)sender
@@ -320,7 +382,6 @@ void DUELog( NSString * str )
 }
 
 @end
-
 
 @implementation CoreClass : NSObject
 
