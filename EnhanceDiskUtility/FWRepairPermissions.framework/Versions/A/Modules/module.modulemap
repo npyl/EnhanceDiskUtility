@@ -1,0 +1,6 @@
+framework module FWRepairPermissions {
+  umbrella header "FWRepairPermissions.h"
+
+  export *
+  module * { export * }
+}
