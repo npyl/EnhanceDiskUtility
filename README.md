@@ -4,6 +4,7 @@ SIMBL plugin for Disk Utility that aims to enable Verify / Repair Permissions su
 # Installation!
 
 Installation is fairly easy if you have mySIMBL installed! [mySIMBL Repository](https://github.com/w0lfschild/mySIMBL)
+
 Just download the project, open it in Xcode, compile and find the EnhanceDiskUtility.bundle in Finder!
 Then double-click it and it will be installed to mySIMBL. Just make sure it has a green light which means its enabled!
 
