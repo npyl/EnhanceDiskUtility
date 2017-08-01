@@ -45,6 +45,8 @@
 #import "StorageKit.h"
 #import "ZKSwizzle/ZKSwizzle.h"
 
+#import <SecurityFoundation/SecurityFoundation.h>   // SFAuthorisationView
+
 #define DUE_DEBUG
 
 //
@@ -119,107 +121,76 @@ void DUELog( NSString * str )
 
 @implementation DUEnhance : NSObject
 
-
-NSString * const kDUEStandardTempPath = @"/tmp/DUEnhance.tmp";
-
-/* Called when there is some data in the output pipe */
-
--(void) receivedData:(NSNotification*)aNotification
-
-{
-    NSLog( @"receivedData!" );
-    
-    NSData *data = [[aNotification userInfo] objectForKey:NSFileHandleNotificationDataItem];
-    
-    // If the length of the data is zero, then the task is basically over - there is nothing
-    // more to get from the handle so we may as well shut down.
-    if ([data length])
-    {
-        // Send the data on to the controller; we can't just use +stringWithUTF8String: here
-        // because -[data bytes] is not necessarily a properly terminated string.
-        // -initWithData:encoding: on the other hand checks -[data length]
-        //[controller appendOutput: [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease]];
-        NSLog( @"%@", [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease] );
-    } else {
-        // We're finished here
-        //[self stopProcess];
-    }
-    
-    // we need to schedule the file handle go read more data in the background again.
-    [[aNotification object] readInBackgroundAndNotify];
-}
-
-/* Called when there is some data in the error pipe */
-
--(void) receivedError:(NSNotification*) rec_not
-{
-    NSLog( @"Received Error Data" );
-
-    NSData *dataOutput=[[rec_not userInfo] objectForKey:NSFileHandleNotificationDataItem];
-    
-    if( !dataOutput)
-        
-        NSLog(@">>>>>>>>>>>>>>Empty Data");
-    
-    [[rec_not object] readInBackgroundAndNotify];
-    
-    //[dataOutput release];
-}
-
-/* Called when the task is complete */
-
--(void) TaskCompletion:(NSNotification*) rec_not
-
-{
-    NSTask * task = [rec_not object];
-    
-    [task terminate];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleDataAvailableNotification object:[task standardOutput]];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleDataAvailableNotification object:[task standardError]];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSTaskDidTerminateNotification object:task];
-
-    NSLog( @"%d", [task terminationStatus] );
-    
-    [task release];
-}
-
-- (void) launchApplicationFromPath:(NSString *)launchPath
-                     withArguments:(NSArray *)arguments
-{
-    NSPipe * outputpipe = [[[NSPipe alloc] init] autorelease];
-    NSPipe * errorpipe = [[[NSPipe alloc] init] autorelease];
-
-    NSFileHandle    *output = [outputpipe fileHandleForReading],
-                    *error = [errorpipe fileHandleForReading];
-    
-    NSTask * task = [[[NSTask alloc] init] autorelease];
-    
-    [task setLaunchPath:launchPath];
-    [task setArguments:arguments];
-    [task setStandardOutput:outputpipe];
-    [task setStandardError:errorpipe];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedData:) name: NSFileHandleDataAvailableNotification object:output];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedError:) name: NSFileHandleDataAvailableNotification object:error];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(TaskCompletion:) name: NSTaskDidTerminateNotification object:task];
-
-    //[input writeData:[NSMutableData initWithString:@"test"]];
-    [output readInBackgroundAndNotify];
-    [error readInBackgroundAndNotify];
-    
-    [task launch];
-}
-
 - (void)VerifyPermissions:(id)sender
 {
     DUELog( @"Told to verify permissions" );
     
     // ** TODO ** Need to lock the disk handle ???
+ 
     
-    NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
+    //
+    //  Authorisation related code taken from: https://github.com/drichardson/examples/blob/master/SecurityFrameworkTest/SecurityFrameworkTest.m
+    //
     
-    [self launchApplicationFromPath:@"/Users/develnpyl/repair_packages" withArguments:@[ @"--verify", @"--standard-pkgs", mountPoint ] ];
+    AuthorizationItem items[1];
+    
+    const char* tool = "/Users/develnpyl/Downloads/RepairPermissionsUtility";
+    
+    items[0].name = kAuthorizationRightExecute;
+    items[0].value = (void*)tool;
+    items[0].valueLength = strlen(items[0].value);
+    items[0].flags = 0;
+    
+    AuthorizationRights rights;
+    rights.count = 1;
+    rights.items = items;
+    
+    SFAuthorization *sfAuth = [SFAuthorization authorizationWithFlags:kAuthorizationFlagInteractionAllowed | kAuthorizationFlagExtendRights
+                                                               rights:&rights
+                                                          environment:kAuthorizationEmptyEnvironment];
+    AuthorizationRef authRef = [sfAuth authorizationRef];
+    
+    NSLog(@"Got back an sfAuth = %@", sfAuth);
+    NSLog(@"Authorization reference: %p", [sfAuth authorizationRef]);
+    
+    if(authRef)
+    {
+        NSLog(@"Executing tool as root");
+        
+        const char* argv[] = {
+            "--verify",
+            "/",
+            "--no-output",
+            NULL
+        };
+        
+        FILE *fpIO = NULL;
+        
+        OSStatus err = AuthorizationExecuteWithPrivileges([sfAuth authorizationRef], tool, kAuthorizationFlagDefaults, (char* const*)argv, &fpIO);
+        
+        if(err != errAuthorizationSuccess)
+        {
+            NSLog(@"Error executing tool with root privileges.");
+            goto bail;
+        }
+        
+        char buf[512];
+        while(!feof(fpIO))
+        {
+            size_t bytesRead = fread(buf, 1, sizeof(buf) - 1, fpIO);
+            buf[bytesRead] = 0;
+            
+            if(bytesRead > 0)
+                NSLog( @"%@", [NSString stringWithUTF8String:buf] );
+        }
+        
+    bail:
+        if(fpIO)
+            fclose(fpIO);
+        ;
+    }
+    
+    //[self launchApplicationFromPath:@"/Users/develnpyl/repair_packages" withArguments:@[ @"--verify", @"--standard-pkgs", mountPoint ] ];
 }
 
 - (void)RepairPermissions:(id)sender
