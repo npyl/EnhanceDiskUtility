@@ -7,18 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		77274C5B1EF6BAB000243954 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77274C5A1EF6BAB000243954 /* LICENSE */; };
+		771BADC31F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper in Resources */ = {isa = PBXBuildFile; fileRef = 771BADC21F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper */; };
+		77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */; };
 		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; };
 		776253E81EFB01C90070463D /* StorageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 776253E71EFB01C90070463D /* StorageKit.framework */; };
+		77A79E471F311AF90041D107 /* RepairPermissionsUtility in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E461F311AF90041D107 /* RepairPermissionsUtility */; };
+		77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */; };
 		77DB43721EF47ADD00B1067C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DB43711EF47ADD00B1067C /* main.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		77274C5A1EF6BAB000243954 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ZKSwizzle/LICENSE; sourceTree = "<group>"; };
+		771BADC21F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = com.apple.bsd.SMJobBlessHelper; sourceTree = "<group>"; };
+		77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ZKSwizzle_LICENSE; path = ZKSwizzle/ZKSwizzle_LICENSE; sourceTree = "<group>"; };
 		775420F91EF568AF0071FBEB /* ZKSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKSwizzle.h; path = ZKSwizzle/ZKSwizzle.h; sourceTree = "<group>"; };
 		775420FA1EF568AF0071FBEB /* ZKSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKSwizzle.m; path = ZKSwizzle/ZKSwizzle.m; sourceTree = "<group>"; };
 		776253E51EFB01520070463D /* StorageKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageKit.h; sourceTree = "<group>"; };
 		776253E71EFB01C90070463D /* StorageKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StorageKit.framework; path = ../../../../System/Library/PrivateFrameworks/StorageKit.framework; sourceTree = "<group>"; };
+		77A79E461F311AF90041D107 /* RepairPermissionsUtility */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = RepairPermissionsUtility; sourceTree = "<group>"; };
+		77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RepairPermissionsUtility_LICENSE; sourceTree = "<group>"; };
 		77DB43681EF47AC800B1067C /* EnhanceDiskUtility.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EnhanceDiskUtility.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		77DB436B1EF47AC800B1067C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		77DB43711EF47ADD00B1067C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -40,7 +46,7 @@
 		77274C5E1EF6D49000243954 /* ZKSwizzle */ = {
 			isa = PBXGroup;
 			children = (
-				77274C5A1EF6BAB000243954 /* LICENSE */,
+				77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */,
 				775420F91EF568AF0071FBEB /* ZKSwizzle.h */,
 				775420FA1EF568AF0071FBEB /* ZKSwizzle.m */,
 			);
@@ -55,9 +61,20 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		77A79E451F311ACC0041D107 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				771BADC21F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper */,
+				77A79E461F311AF90041D107 /* RepairPermissionsUtility */,
+				77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		77DB435F1EF47AC800B1067C = {
 			isa = PBXGroup;
 			children = (
+				77A79E451F311ACC0041D107 /* Resources */,
 				77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */,
 				776253E61EFB01C90070463D /* Frameworks */,
 				77DB43691EF47AC800B1067C /* Products */,
@@ -115,7 +132,8 @@
 				TargetAttributes = {
 					77DB43671EF47AC800B1067C = {
 						CreatedOnToolsVersion = 8.3.2;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = CC63MSFH9N;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -141,7 +159,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				77274C5B1EF6BAB000243954 /* LICENSE in Resources */,
+				77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */,
+				77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */,
+				771BADC31F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper in Resources */,
+				77A79E471F311AF90041D107 /* RepairPermissionsUtility in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,7 +274,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CC63MSFH9N;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
@@ -264,6 +287,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = ulcheats.EnhanceDiskUtility;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -273,7 +297,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CC63MSFH9N;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
@@ -284,6 +310,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = ulcheats.EnhanceDiskUtility;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};

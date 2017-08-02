@@ -33,5 +33,10 @@
 	<string>Copyright © 2017 ulcheats. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
 	<string>CoreClass</string>
+	<key>SMPrivilegedExecutables</key>
+	<dict>
+		<key>com.apple.bsd.SMJobBlessHelper</key>
+		<string>identifier &quot;com.apple.bsd.SMJobBlessHelper&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: n.pylarinos@hotmail.com (C674784ZBL)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
+	</dict>
 </dict>
 </plist>

@@ -30,6 +30,18 @@
 //  https://www.firewolf.science/2016/07/repairpermissions-v3-now-supports-repairing-permissions-on-macos-sierra/
 //
 
+//
+//  For Executing FireWolf's Utility with root permissions I got help
+//      from OCForks's project.  He actually updated the SMJobBless+XPC project
+//      which was originally created by Nathan de Vries.
+//
+//  https://github.com/OCForks/SMJobBlessXPC
+//  https://github.com/atnan/SMJobBlessXPC
+//
+//  Nathan de Vries post:
+//  http://atnan.com/blog/2012/02/29/modern-privileged-helper-tools-using-smjobbless-plus-xpc/
+//
+
 /*  TODO:
  *
  *
@@ -45,7 +57,6 @@
 #import "StorageKit.h"
 #import "ZKSwizzle/ZKSwizzle.h"
 
-#import <SecurityFoundation/SecurityFoundation.h>   // SFAuthorisationView
 
 #define DUE_DEBUG
 
@@ -101,6 +112,8 @@ char * _csr_check(aMask, aFlipflag)
     return("\33[1mdis    abled\33[0m");
 }
 
+const NSString * kDUEPluginPath = @"/Library/Application Support/SIMBL/Plugins/EnhanceDiskUtility.bundle/Contents";
+
 bool gotSUWorkspaceViewControllerHandle = false;
 
 NSString * const kNSToolbarVerifyPermissionsItemIdentifier = @"VerifyPermissionsItemIdentifier";
@@ -119,78 +132,116 @@ void DUELog( NSString * str )
 }
 
 
+#import <ServiceManagement/ServiceManagement.h>
+#import <Security/Authorization.h>
+
+
 @implementation DUEnhance : NSObject
+
+- (BOOL)blessHelperWithLabel:(NSString *)label
+                       error:(NSError **)error {
+    
+    BOOL result = NO;
+    
+    AuthorizationItem authItem		= { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
+    AuthorizationRights authRights	= { 1, &authItem };
+    AuthorizationFlags flags		=	kAuthorizationFlagDefaults				|
+    kAuthorizationFlagInteractionAllowed	|
+    kAuthorizationFlagPreAuthorize			|
+    kAuthorizationFlagExtendRights;
+    
+    AuthorizationRef authRef = NULL;
+    
+    /* Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper). */
+    OSStatus status = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
+    if (status != errAuthorizationSuccess) {
+        NSLog( @"Failed to create AuthorizationRef. Error code: %d", (int)status );
+        
+    } else {
+        /* This does all the work of verifying the helper tool against the application
+         * and vice-versa. Once verification has passed, the embedded launchd.plist
+         * is extracted and placed in /Library/LaunchDaemons and then loaded. The
+         * executable is placed in /Library/PrivilegedHelperTools.
+         */
+        result = SMJobBless(kSMDomainSystemLaunchd, (CFStringRef)label, authRef, (CFErrorRef *)error);
+    }
+    
+    return result;
+}
+
+- (void)executeUtilityWithArguments:(NSArray*)arguments
+{
+//    NSString * duePluginResourcesPath = [kDUEPluginPath stringByAppendingString:@"/Resources"];
+//    NSString * repairPermissionsUtilityPath = [duePluginResourcesPath stringByAppendingString:@"/RepairPermissionsUtility"];
+    
+    //
+    //  Code to determine if we are root user.
+    //  1) YES
+    //          Just run the utility
+    //  2) NO
+    //          Ask for password!
+    //
+    
+    NSError *error = nil;
+    if (![self blessHelperWithLabel:@"com.apple.bsd.SMJobBlessHelper" error:&error]) {
+        NSLog( @"Failed to bless helper. Error: %@", error );
+        return;
+    }
+    
+    NSLog( @"Helper available." );
+    
+    
+    xpc_connection_t connection = xpc_connection_create_mach_service("com.apple.bsd.SMJobBlessHelper", NULL, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
+    
+    if (!connection) {
+        NSLog( @"Failed to create XPC connection." );
+        return;
+    }
+    
+    xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
+        xpc_type_t type = xpc_get_type(event);
+        
+        if (type == XPC_TYPE_ERROR) {
+            
+            if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
+                NSLog( @"XPC connection interupted." );
+                
+            } else if (event == XPC_ERROR_CONNECTION_INVALID) {
+                NSLog( @"XPC connection invalid, releasing." );
+                xpc_release(connection);
+                
+            } else {
+                NSLog( @"Unexpected XPC connection error." );
+            }
+            
+        } else {
+            NSLog( @"Unexpected XPC connection event." );
+        }
+    });
+    
+    xpc_connection_resume(connection);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    const char* request = "Hi there, helper service.";
+    xpc_dictionary_set_string(message, "request", request);
+    
+    NSLog( @"Sending request: %s", request );
+    
+    xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
+        const char* response = xpc_dictionary_get_string(event, "reply");
+        NSLog( @"Received response: %s.", response );
+    });
+}
 
 - (void)VerifyPermissions:(id)sender
 {
+    // ** TODO ** Need to lock the disk handle ???
+    //[self launchApplicationFromPath:@"/Users/develnpyl/repair_packages" withArguments:@[ @"--verify", @"--standard-pkgs", mountPoint ] ];
+    
     DUELog( @"Told to verify permissions" );
     
-    // ** TODO ** Need to lock the disk handle ???
- 
-    
-    //
-    //  Authorisation related code taken from: https://github.com/drichardson/examples/blob/master/SecurityFrameworkTest/SecurityFrameworkTest.m
-    //
-    
-    AuthorizationItem items[1];
-    
-    const char* tool = "/Users/develnpyl/Downloads/RepairPermissionsUtility";
-    
-    items[0].name = kAuthorizationRightExecute;
-    items[0].value = (void*)tool;
-    items[0].valueLength = strlen(items[0].value);
-    items[0].flags = 0;
-    
-    AuthorizationRights rights;
-    rights.count = 1;
-    rights.items = items;
-    
-    SFAuthorization *sfAuth = [SFAuthorization authorizationWithFlags:kAuthorizationFlagInteractionAllowed | kAuthorizationFlagExtendRights
-                                                               rights:&rights
-                                                          environment:kAuthorizationEmptyEnvironment];
-    AuthorizationRef authRef = [sfAuth authorizationRef];
-    
-    NSLog(@"Got back an sfAuth = %@", sfAuth);
-    NSLog(@"Authorization reference: %p", [sfAuth authorizationRef]);
-    
-    if(authRef)
-    {
-        NSLog(@"Executing tool as root");
-        
-        const char* argv[] = {
-            "--verify",
-            "/",
-            "--no-output",
-            NULL
-        };
-        
-        FILE *fpIO = NULL;
-        
-        OSStatus err = AuthorizationExecuteWithPrivileges([sfAuth authorizationRef], tool, kAuthorizationFlagDefaults, (char* const*)argv, &fpIO);
-        
-        if(err != errAuthorizationSuccess)
-        {
-            NSLog(@"Error executing tool with root privileges.");
-            goto bail;
-        }
-        
-        char buf[512];
-        while(!feof(fpIO))
-        {
-            size_t bytesRead = fread(buf, 1, sizeof(buf) - 1, fpIO);
-            buf[bytesRead] = 0;
-            
-            if(bytesRead > 0)
-                NSLog( @"%@", [NSString stringWithUTF8String:buf] );
-        }
-        
-    bail:
-        if(fpIO)
-            fclose(fpIO);
-        ;
-    }
-    
-    //[self launchApplicationFromPath:@"/Users/develnpyl/repair_packages" withArguments:@[ @"--verify", @"--standard-pkgs", mountPoint ] ];
+    NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
+    [self executeUtilityWithArguments:@[ @"--verify", mountPoint ]];
 }
 
 - (void)RepairPermissions:(id)sender
