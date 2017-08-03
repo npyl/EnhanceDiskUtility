@@ -19,4 +19,5 @@ I leave the project as is because I dont have much time right now...
 
 # License
 
+License is MIT License!
 If you have any problem with the license please tell me and I will see what I can do to help you!
