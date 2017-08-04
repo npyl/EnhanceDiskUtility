@@ -57,6 +57,8 @@
 #import "StorageKit.h"
 #import "ZKSwizzle/ZKSwizzle.h"
 
+#import <ServiceManagement/ServiceManagement.h>
+
 
 #define DUE_DEBUG
 
@@ -132,10 +134,6 @@ void DUELog( NSString * str )
 }
 
 
-#import <ServiceManagement/ServiceManagement.h>
-#import <Security/Authorization.h>
-
-
 @implementation DUEnhance : NSObject
 
 - (BOOL)blessHelperWithLabel:(NSString *)label
@@ -163,6 +161,7 @@ void DUELog( NSString * str )
          * is extracted and placed in /Library/LaunchDaemons and then loaded. The
          * executable is placed in /Library/PrivilegedHelperTools.
          */
+        NSLog( @"%@", label );
         result = SMJobBless(kSMDomainSystemLaunchd, (CFStringRef)label, authRef, (CFErrorRef *)error);
     }
     
@@ -182,55 +181,19 @@ void DUELog( NSString * str )
     //          Ask for password!
     //
     
-    NSError *error = nil;
-    if (![self blessHelperWithLabel:@"com.apple.bsd.SMJobBlessHelper" error:&error]) {
-        NSLog( @"Failed to bless helper. Error: %@", error );
-        return;
-    }
+    const char * helperCallerPath = [[kDUEPluginPath stringByAppendingString:@"/Resources/SMJobBlessHelperCaller.app/Contents/MacOS/SMJobBlessHelperCaller"] UTF8String];
+
+//    NSLog( @"%s", helperPath );
     
-    NSLog( @"Helper available." );
+    //
+    //  Call the HelperCaller
+    //
+    NSTask * task = [[NSTask alloc] init];
+    [task setLaunchPath:[NSString stringWithUTF8String:helperCallerPath]];
+    [task launch];
+    [task waitUntilExit];
     
-    
-    xpc_connection_t connection = xpc_connection_create_mach_service("com.apple.bsd.SMJobBlessHelper", NULL, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
-    
-    if (!connection) {
-        NSLog( @"Failed to create XPC connection." );
-        return;
-    }
-    
-    xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
-        xpc_type_t type = xpc_get_type(event);
-        
-        if (type == XPC_TYPE_ERROR) {
-            
-            if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-                NSLog( @"XPC connection interupted." );
-                
-            } else if (event == XPC_ERROR_CONNECTION_INVALID) {
-                NSLog( @"XPC connection invalid, releasing." );
-                xpc_release(connection);
-                
-            } else {
-                NSLog( @"Unexpected XPC connection error." );
-            }
-            
-        } else {
-            NSLog( @"Unexpected XPC connection event." );
-        }
-    });
-    
-    xpc_connection_resume(connection);
-    
-    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
-    const char* request = "Hi there, helper service.";
-    xpc_dictionary_set_string(message, "request", request);
-    
-    NSLog( @"Sending request: %s", request );
-    
-    xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
-        const char* response = xpc_dictionary_get_string(event, "reply");
-        NSLog( @"Received response: %s.", response );
-    });
+    NSLog( @"The caller exited with status: %i", [task terminationStatus] );
 }
 
 - (void)VerifyPermissions:(id)sender

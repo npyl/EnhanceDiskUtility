@@ -7,36 +7,84 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		771BADC31F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper in Resources */ = {isa = PBXBuildFile; fileRef = 771BADC21F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper */; };
 		77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */; };
 		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; };
 		776253E81EFB01C90070463D /* StorageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 776253E71EFB01C90070463D /* StorageKit.framework */; };
+		7778613E1F34E8E4007B145C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7778613D1F34E8E4007B145C /* main.m */; };
+		777861431F34E8E4007B145C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 777861421F34E8E4007B145C /* Assets.xcassets */; };
+		7778614C1F34E8F5007B145C /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 77F76DC91F34D82B00ADAD8B /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		7778614D1F34E928007B145C /* SMJobBlessHelperCaller.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		77A79E471F311AF90041D107 /* RepairPermissionsUtility in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E461F311AF90041D107 /* RepairPermissionsUtility */; };
 		77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */; };
 		77DB43721EF47ADD00B1067C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DB43711EF47ADD00B1067C /* main.m */; };
+		77F76DD31F34D99500ADAD8B /* SMJobBlessHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DBCD0B1F32189A00186770 /* SMJobBlessHelper.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		7778614B1F34E8EF007B145C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchServices;
+			dstSubfolderSpec = 1;
+			files = (
+				7778614C1F34E8F5007B145C /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		77F76DE11F34DAEC00ADAD8B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				7778614D1F34E928007B145C /* SMJobBlessHelperCaller.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		771BADC21F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = com.apple.bsd.SMJobBlessHelper; sourceTree = "<group>"; };
 		77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ZKSwizzle_LICENSE; path = ZKSwizzle/ZKSwizzle_LICENSE; sourceTree = "<group>"; };
 		775420F91EF568AF0071FBEB /* ZKSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKSwizzle.h; path = ZKSwizzle/ZKSwizzle.h; sourceTree = "<group>"; };
 		775420FA1EF568AF0071FBEB /* ZKSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKSwizzle.m; path = ZKSwizzle/ZKSwizzle.m; sourceTree = "<group>"; };
 		776253E51EFB01520070463D /* StorageKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageKit.h; sourceTree = "<group>"; };
 		776253E71EFB01C90070463D /* StorageKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StorageKit.framework; path = ../../../../System/Library/PrivateFrameworks/StorageKit.framework; sourceTree = "<group>"; };
+		777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMJobBlessHelperCaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7778613D1F34E8E4007B145C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		777861421F34E8E4007B145C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		777861471F34E8E4007B145C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		77A79E461F311AF90041D107 /* RepairPermissionsUtility */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = RepairPermissionsUtility; sourceTree = "<group>"; };
 		77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RepairPermissionsUtility_LICENSE; sourceTree = "<group>"; };
 		77DB43681EF47AC800B1067C /* EnhanceDiskUtility.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EnhanceDiskUtility.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		77DB436B1EF47AC800B1067C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		77DB43711EF47ADD00B1067C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		77DB43731EF47E7600B1067C /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		77DBCD091F32189A00186770 /* SMJobBlessHelper-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SMJobBlessHelper-Info.plist"; sourceTree = "<group>"; };
+		77DBCD0A1F32189A00186770 /* SMJobBlessHelper-Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SMJobBlessHelper-Launchd.plist"; sourceTree = "<group>"; };
+		77DBCD0B1F32189A00186770 /* SMJobBlessHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMJobBlessHelper.m; sourceTree = "<group>"; };
+		77F76DC91F34D82B00ADAD8B /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = org.npyl.EnhanceDiskUtility.SMJobBlessHelper; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		777861341F34E8E4007B145C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		77DB43651EF47AC800B1067C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				776253E81EFB01C90070463D /* StorageKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		77F76DC61F34D82B00ADAD8B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,24 +107,35 @@
 				776253E71EFB01C90070463D /* StorageKit.framework */,
 			);
 			name = Frameworks;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		777861381F34E8E4007B145C /* SMJobBlessHelperCaller */ = {
+			isa = PBXGroup;
+			children = (
+				777861421F34E8E4007B145C /* Assets.xcassets */,
+				777861471F34E8E4007B145C /* Info.plist */,
+				7778613D1F34E8E4007B145C /* main.m */,
+			);
+			path = SMJobBlessHelperCaller;
 			sourceTree = "<group>";
 		};
 		77A79E451F311ACC0041D107 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				771BADC21F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper */,
 				77A79E461F311AF90041D107 /* RepairPermissionsUtility */,
 				77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */,
 			);
 			name = Resources;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		77DB435F1EF47AC800B1067C = {
 			isa = PBXGroup;
 			children = (
-				77A79E451F311ACC0041D107 /* Resources */,
+				77DBCD031F32188500186770 /* SMJobBlessHelper */,
+				777861381F34E8E4007B145C /* SMJobBlessHelperCaller */,
 				77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */,
-				776253E61EFB01C90070463D /* Frameworks */,
 				77DB43691EF47AC800B1067C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,6 +144,8 @@
 			isa = PBXGroup;
 			children = (
 				77DB43681EF47AC800B1067C /* EnhanceDiskUtility.bundle */,
+				77F76DC91F34D82B00ADAD8B /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper */,
+				777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -92,6 +153,8 @@
 		77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */ = {
 			isa = PBXGroup;
 			children = (
+				77A79E451F311ACC0041D107 /* Resources */,
+				776253E61EFB01C90070463D /* Frameworks */,
 				77274C5E1EF6D49000243954 /* ZKSwizzle */,
 				77DB436B1EF47AC800B1067C /* Info.plist */,
 				776253E51EFB01520070463D /* StorageKit.h */,
@@ -101,9 +164,37 @@
 			path = EnhanceDiskUtility;
 			sourceTree = "<group>";
 		};
+		77DBCD031F32188500186770 /* SMJobBlessHelper */ = {
+			isa = PBXGroup;
+			children = (
+				77DBCD091F32189A00186770 /* SMJobBlessHelper-Info.plist */,
+				77DBCD0A1F32189A00186770 /* SMJobBlessHelper-Launchd.plist */,
+				77DBCD0B1F32189A00186770 /* SMJobBlessHelper.m */,
+			);
+			path = SMJobBlessHelper;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		777861361F34E8E4007B145C /* SMJobBlessHelperCaller */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 777861481F34E8E4007B145C /* Build configuration list for PBXNativeTarget "SMJobBlessHelperCaller" */;
+			buildPhases = (
+				777861331F34E8E4007B145C /* Sources */,
+				777861341F34E8E4007B145C /* Frameworks */,
+				777861351F34E8E4007B145C /* Resources */,
+				7778614B1F34E8EF007B145C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SMJobBlessHelperCaller;
+			productName = SMJobBlessHelperCaller;
+			productReference = 777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */;
+			productType = "com.apple.product-type.application";
+		};
 		77DB43671EF47AC800B1067C /* EnhanceDiskUtility */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 77DB436E1EF47AC800B1067C /* Build configuration list for PBXNativeTarget "EnhanceDiskUtility" */;
@@ -111,6 +202,7 @@
 				77DB43641EF47AC800B1067C /* Sources */,
 				77DB43651EF47AC800B1067C /* Frameworks */,
 				77DB43661EF47AC800B1067C /* Resources */,
+				77F76DE11F34DAEC00ADAD8B /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -121,17 +213,46 @@
 			productReference = 77DB43681EF47AC800B1067C /* EnhanceDiskUtility.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
+		77F76DC81F34D82B00ADAD8B /* SMJobBlessHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 77F76DCD1F34D82B00ADAD8B /* Build configuration list for PBXNativeTarget "SMJobBlessHelper" */;
+			buildPhases = (
+				77F76DC51F34D82B00ADAD8B /* Sources */,
+				77F76DC61F34D82B00ADAD8B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SMJobBlessHelper;
+			productName = SMJobBlessHelper;
+			productReference = 77F76DC91F34D82B00ADAD8B /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		77DB43601EF47AC800B1067C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					New,
+				);
 				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = ulcheats;
 				TargetAttributes = {
+					777861361F34E8E4007B145C = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = CC63MSFH9N;
+						ProvisioningStyle = Manual;
+					};
 					77DB43671EF47AC800B1067C = {
 						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = CC63MSFH9N;
+						ProvisioningStyle = Manual;
+					};
+					77F76DC81F34D82B00ADAD8B = {
+						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = CC63MSFH9N;
 						ProvisioningStyle = Manual;
 					};
@@ -143,6 +264,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 77DB435F1EF47AC800B1067C;
 			productRefGroup = 77DB43691EF47AC800B1067C /* Products */;
@@ -150,18 +272,27 @@
 			projectRoot = "";
 			targets = (
 				77DB43671EF47AC800B1067C /* EnhanceDiskUtility */,
+				77F76DC81F34D82B00ADAD8B /* SMJobBlessHelper */,
+				777861361F34E8E4007B145C /* SMJobBlessHelperCaller */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		777861351F34E8E4007B145C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				777861431F34E8E4007B145C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		77DB43661EF47AC800B1067C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */,
 				77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */,
-				771BADC31F3151DD00480B8F /* com.apple.bsd.SMJobBlessHelper in Resources */,
 				77A79E471F311AF90041D107 /* RepairPermissionsUtility in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -169,6 +300,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		777861331F34E8E4007B145C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7778613E1F34E8E4007B145C /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		77DB43641EF47AC800B1067C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -178,9 +317,49 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		77F76DC51F34D82B00ADAD8B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				77F76DD31F34D99500ADAD8B /* SMJobBlessHelper.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		777861491F34E8E4007B145C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CC63MSFH9N;
+				INFOPLIST_FILE = SMJobBlessHelperCaller/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.npyl.EnhanceDiskUtility.SMJobBlessHelperCaller;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Debug;
+		};
+		7778614A1F34E8E4007B145C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CC63MSFH9N;
+				INFOPLIST_FILE = SMJobBlessHelperCaller/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.npyl.EnhanceDiskUtility.SMJobBlessHelperCaller;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Release;
+		};
 		77DB436C1EF47AC800B1067C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -316,9 +495,69 @@
 			};
 			name = Release;
 		};
+		77F76DCE1F34D82B00ADAD8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "Mac Developer: n.pylarinos@hotmail.com (C674784ZBL)";
+				DEVELOPMENT_TEAM = CC63MSFH9N;
+				INFOPLIST_FILE = "$(SRCROOT)/SMJobBlessHelper/SMJobBlessHelper-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					"SMJobBlessHelper/SMJobBlessHelper-Info.plist",
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"SMJobBlessHelper/SMJobBlessHelper-Launchd.plist",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.npyl.EnhanceDiskUtility.SMJobBlessHelper;
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
+				PRODUCT_NAME = org.npyl.EnhanceDiskUtility.SMJobBlessHelper;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Debug;
+		};
+		77F76DCF1F34D82B00ADAD8B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CODE_SIGN_IDENTITY = "Mac Developer: n.pylarinos@hotmail.com (C674784ZBL)";
+				DEVELOPMENT_TEAM = CC63MSFH9N;
+				INFOPLIST_FILE = "$(SRCROOT)/SMJobBlessHelper/SMJobBlessHelper-Info.plist";
+				INFOPLIST_PREPROCESS = YES;
+				INFOPLIST_PREPROCESSOR_DEFINITIONS = SMJOBBLESS_RELEASE;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					"SMJobBlessHelper/SMJobBlessHelper-Info.plist",
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					"SMJobBlessHelper/SMJobBlessHelper-Launchd.plist",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.npyl.EnhanceDiskUtility.SMJobBlessHelper;
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
+				PRODUCT_NAME = org.npyl.EnhanceDiskUtility.SMJobBlessHelper;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		777861481F34E8E4007B145C /* Build configuration list for PBXNativeTarget "SMJobBlessHelperCaller" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				777861491F34E8E4007B145C /* Debug */,
+				7778614A1F34E8E4007B145C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		77DB43631EF47AC800B1067C /* Build configuration list for PBXProject "EnhanceDiskUtility" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -333,6 +572,15 @@
 			buildConfigurations = (
 				77DB436F1EF47AC800B1067C /* Debug */,
 				77DB43701EF47AC800B1067C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		77F76DCD1F34D82B00ADAD8B /* Build configuration list for PBXNativeTarget "SMJobBlessHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				77F76DCE1F34D82B00ADAD8B /* Debug */,
+				77F76DCF1F34D82B00ADAD8B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
