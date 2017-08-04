@@ -9,10 +9,50 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>SMJobBlessHelper.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>SMJobBlessHelperCaller.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>7778611B1F34E7B6007B145C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>777861361F34E8E4007B145C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>77DB43671EF47AC800B1067C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>77DBCCF11F3214E400186770</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>77DBCD011F32188500186770</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>77F76DC81F34D82B00ADAD8B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>77F76DD71F34D9DD00ADAD8B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

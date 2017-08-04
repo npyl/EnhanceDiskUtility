@@ -136,43 +136,9 @@ void DUELog( NSString * str )
 
 @implementation DUEnhance : NSObject
 
-- (BOOL)blessHelperWithLabel:(NSString *)label
-                       error:(NSError **)error {
-    
-    BOOL result = NO;
-    
-    AuthorizationItem authItem		= { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
-    AuthorizationRights authRights	= { 1, &authItem };
-    AuthorizationFlags flags		=	kAuthorizationFlagDefaults				|
-    kAuthorizationFlagInteractionAllowed	|
-    kAuthorizationFlagPreAuthorize			|
-    kAuthorizationFlagExtendRights;
-    
-    AuthorizationRef authRef = NULL;
-    
-    /* Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper). */
-    OSStatus status = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
-    if (status != errAuthorizationSuccess) {
-        NSLog( @"Failed to create AuthorizationRef. Error code: %d", (int)status );
-        
-    } else {
-        /* This does all the work of verifying the helper tool against the application
-         * and vice-versa. Once verification has passed, the embedded launchd.plist
-         * is extracted and placed in /Library/LaunchDaemons and then loaded. The
-         * executable is placed in /Library/PrivilegedHelperTools.
-         */
-        NSLog( @"%@", label );
-        result = SMJobBless(kSMDomainSystemLaunchd, (CFStringRef)label, authRef, (CFErrorRef *)error);
-    }
-    
-    return result;
-}
-
 - (void)executeUtilityWithArguments:(NSArray*)arguments
 {
-//    NSString * duePluginResourcesPath = [kDUEPluginPath stringByAppendingString:@"/Resources"];
-//    NSString * repairPermissionsUtilityPath = [duePluginResourcesPath stringByAppendingString:@"/RepairPermissionsUtility"];
-    
+    //  ** TODO **
     //
     //  Code to determine if we are root user.
     //  1) YES
@@ -183,7 +149,7 @@ void DUELog( NSString * str )
     
     const char * helperCallerPath = [[kDUEPluginPath stringByAppendingString:@"/Resources/SMJobBlessHelperCaller.app/Contents/MacOS/SMJobBlessHelperCaller"] UTF8String];
 
-//    NSLog( @"%s", helperPath );
+    NSLog( @"HelperCallerPath = %s", helperCallerPath );
     
     //
     //  Call the HelperCaller
@@ -193,13 +159,61 @@ void DUELog( NSString * str )
     [task launch];
     [task waitUntilExit];
     
-    NSLog( @"The caller exited with status: %i", [task terminationStatus] );
+    if( [task terminationStatus] != 0 ) // failure
+    {
+        NSLog( @"Sth didnt go well... :(" );
+        return;
+    }
+    
+    //
+    //  Start IPC with Helper
+    //
+    
+    xpc_connection_t connection = xpc_connection_create_mach_service( "org.npyl.EnhanceDiskUtility.SMJobBlessHelper", NULL, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
+    
+    if (!connection) {
+        NSLog( @"Failed to create XPC connection." );
+        return;
+    }
+    
+    xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
+        xpc_type_t type = xpc_get_type(event);
+        
+        if (type == XPC_TYPE_ERROR) {
+            
+            if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
+                NSLog( @"XPC connection interupted." );
+                
+            } else if (event == XPC_ERROR_CONNECTION_INVALID) {
+                NSLog( @"XPC connection invalid, releasing." );
+                xpc_release(connection);
+                
+            } else {
+                NSLog( @"Unexpected XPC connection error." );
+            }
+            
+        } else {
+            NSLog( @"Unexpected XPC connection event." );
+        }
+    });
+    
+    xpc_connection_resume(connection);
+    
+    xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+    const char* request = "Hi there, helper service.";
+    xpc_dictionary_set_string(message, "request", request);
+    
+    NSLog( @"Sending request: %s", request );
+    
+    xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
+        const char* response = xpc_dictionary_get_string(event, "reply");
+        NSLog( @"Received response: %s.", response );
+    });
 }
 
 - (void)VerifyPermissions:(id)sender
 {
     // ** TODO ** Need to lock the disk handle ???
-    //[self launchApplicationFromPath:@"/Users/develnpyl/repair_packages" withArguments:@[ @"--verify", @"--standard-pkgs", mountPoint ] ];
     
     DUELog( @"Told to verify permissions" );
     
