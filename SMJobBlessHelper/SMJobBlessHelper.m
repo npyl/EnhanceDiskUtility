@@ -51,7 +51,6 @@ Copyright (C) 2011 Apple Inc. All Rights Reserved.
 
 /*
  *  ARC is disabled!
- *
  */
 
 #include <syslog.h>
@@ -78,11 +77,12 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         
 	} else {
         xpc_connection_t remote = xpc_dictionary_get_remote_connection(event);
-        
+    
         xpc_object_t reply = xpc_dictionary_create_reply(event);
         xpc_dictionary_set_string(reply, "reply", "Hi there, host application!");
         xpc_connection_send_message(remote, reply);
         xpc_release(reply);
+        
         
         NSPipe * pipe = [[NSPipe alloc] init];
         NSFileHandle * output = [pipe fileHandleForWriting];
@@ -91,16 +91,12 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         NSTask * task = [[NSTask alloc] init];
         [task setLaunchPath:@"/Users/develnpyl/Downloads/RepairPermissionsUtility"];
         [task setArguments:@[@"--verify", @"/", @"--no-output"]];
-        //[task setStandardOutput:output];
         
         task.standardOutput = [NSPipe pipe];
         [[task.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle *file) {
-         NSData *data = [file availableData]; // this will read to EOF, so call only once
-         NSLog(@"Task output! %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-         
-         // if you're collecting the whole output of a task, you may store it on a property
-         //[self.taskOutput appendData:data];
-         }];
+            NSData *data = [file availableData]; // this will read to EOF, so call only once
+            NSLog(@"Task output! %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+        }];
         
         [task launch];
         
@@ -108,7 +104,7 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         NSData * data = [[NSData alloc] initWithData:[input availableData]];
         NSString * str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSLog( @"Stuff I got from my trip: %@", str );
-	}
+    }
 }
 
 static void __XPC_Connection_Handler(xpc_connection_t connection)  {
@@ -122,6 +118,7 @@ static void __XPC_Connection_Handler(xpc_connection_t connection)  {
 }
 
 int main(int argc, const char *argv[]) {
+    
     xpc_connection_t service = xpc_connection_create_mach_service("org.npyl.EnhanceDiskUtility.SMJobBlessHelper",
                                                                   dispatch_get_main_queue(),
                                                                   XPC_CONNECTION_MACH_SERVICE_LISTENER);
@@ -141,7 +138,7 @@ int main(int argc, const char *argv[]) {
     dispatch_main();
     
     xpc_release(service);
-    
+
     return EXIT_SUCCESS;
 }
 

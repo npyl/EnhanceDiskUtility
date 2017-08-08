@@ -22,6 +22,18 @@
  *  Also, this .app can be formless for less overhead! So we dont use the NSApplicationMain();
  *  For the same reason I have removed the storyboard file!!
  *
+ *  -----------------------------------------------------------------------------------------------------------------------
+ *
+ *  How this works:
+ *
+ *  Asks user for password
+ *  Runs the helper
+ *  ( these are done inside blessHelperWithLabel() )
+ *
+ *  Exits and control is passed the EnhanceDiskUtility.bundle to do IPC with the helper
+ *      and tell it to either do repair or verification of permissions!
+ *
+ *  ========================================================================================================================
  */
 
 #import <Cocoa/Cocoa.h>
@@ -33,10 +45,10 @@ BOOL blessHelperWithLabel( NSString * label, NSError ** error )
     
     AuthorizationItem authItem		= { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
     AuthorizationRights authRights	= { 1, &authItem };
-    AuthorizationFlags flags		=	kAuthorizationFlagDefaults				|
-    kAuthorizationFlagInteractionAllowed	|
-    kAuthorizationFlagPreAuthorize			|
-    kAuthorizationFlagExtendRights;
+    AuthorizationFlags flags		=	kAuthorizationFlagDefaults |
+                                        kAuthorizationFlagInteractionAllowed	|
+                                        kAuthorizationFlagPreAuthorize	|
+                                        kAuthorizationFlagExtendRights;
     
     AuthorizationRef authRef = NULL;
     
@@ -61,7 +73,7 @@ BOOL blessHelperWithLabel( NSString * label, NSError ** error )
 int main(int argc, const char * argv[]) {
     NSError *error = nil;
     
-    if (! blessHelperWithLabel( @"org.npyl.EnhanceDiskUtility.SMJobBlessHelper", &error ) ) {
+    if ( !blessHelperWithLabel( @"org.npyl.EnhanceDiskUtility.SMJobBlessHelper", &error ) ) {
         NSLog( @"Failed to bless helper. Error: %@", error );
         return -1;
     }
