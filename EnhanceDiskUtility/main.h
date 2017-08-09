@@ -11,23 +11,11 @@
 
 @import AppKit;
 
-
-@interface DUEVerifyPermissionsSheetController : NSWindowController
-{
-    IBOutlet NSWindow * verifyPermissionsWindow;
-}
-
-@end
-@interface DUERepairPermissionsSheetController : NSWindowController @end
-
 @interface _due_SUWorkspaceViewController : NSViewController @end
 
 
 
 @interface DUEnhance : NSObject         // ** TODO ** Change that with NSObject <NSToolbarDelegate> ????
-{
-    DUEVerifyPermissionsSheetController * verifyPermissionsSheet;
-}
 
 - (void)VerifyPermissions:(id)sender;
 - (void)RepairPermissions:(id)sender;

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */; };
+		7746F04E1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7746F04D1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m */; };
 		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; };
 		776253E81EFB01C90070463D /* StorageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 776253E71EFB01C90070463D /* StorageKit.framework */; };
 		776811F61F3506BA0042DDBA /* RepairPermissionsUtility in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E461F311AF90041D107 /* RepairPermissionsUtility */; };
@@ -15,7 +16,7 @@
 		777861431F34E8E4007B145C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 777861421F34E8E4007B145C /* Assets.xcassets */; };
 		7778614C1F34E8F5007B145C /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 77F76DC91F34D82B00ADAD8B /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		7778614D1F34E928007B145C /* SMJobBlessHelperCaller.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		7786EE521F35E0A0001B6B5F /* VerifyPermissions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7786EE511F35E0A0001B6B5F /* VerifyPermissions.xib */; };
+		7786EE521F35E0A0001B6B5F /* VerifyRepairPermissions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7786EE511F35E0A0001B6B5F /* VerifyRepairPermissions.xib */; };
 		77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */; };
 		77DB43721EF47ADD00B1067C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DB43711EF47ADD00B1067C /* main.m */; };
 		77F76DD31F34D99500ADAD8B /* SMJobBlessHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DBCD0B1F32189A00186770 /* SMJobBlessHelper.m */; };
@@ -46,6 +47,8 @@
 
 /* Begin PBXFileReference section */
 		77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ZKSwizzle_LICENSE; path = ZKSwizzle/ZKSwizzle_LICENSE; sourceTree = "<group>"; };
+		7746F04C1F3B234C0034FD11 /* DUEVerifyRepairSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DUEVerifyRepairSheetController.h; sourceTree = "<group>"; };
+		7746F04D1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DUEVerifyRepairSheetController.m; sourceTree = "<group>"; };
 		775420F91EF568AF0071FBEB /* ZKSwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZKSwizzle.h; path = ZKSwizzle/ZKSwizzle.h; sourceTree = "<group>"; };
 		775420FA1EF568AF0071FBEB /* ZKSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKSwizzle.m; path = ZKSwizzle/ZKSwizzle.m; sourceTree = "<group>"; };
 		776253E51EFB01520070463D /* StorageKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageKit.h; sourceTree = "<group>"; };
@@ -55,7 +58,7 @@
 		7778613D1F34E8E4007B145C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		777861421F34E8E4007B145C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		777861471F34E8E4007B145C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7786EE511F35E0A0001B6B5F /* VerifyPermissions.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VerifyPermissions.xib; path = ../VerifyPermissions.xib; sourceTree = "<group>"; };
+		7786EE511F35E0A0001B6B5F /* VerifyRepairPermissions.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VerifyRepairPermissions.xib; path = ../VerifyRepairPermissions.xib; sourceTree = "<group>"; };
 		77A79E461F311AF90041D107 /* RepairPermissionsUtility */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = RepairPermissionsUtility; sourceTree = "<group>"; };
 		77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RepairPermissionsUtility_LICENSE; sourceTree = "<group>"; };
 		77DB43681EF47AC800B1067C /* EnhanceDiskUtility.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EnhanceDiskUtility.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,9 +165,11 @@
 				77274C5E1EF6D49000243954 /* ZKSwizzle */,
 				77DB436B1EF47AC800B1067C /* Info.plist */,
 				776253E51EFB01520070463D /* StorageKit.h */,
+				7746F04C1F3B234C0034FD11 /* DUEVerifyRepairSheetController.h */,
+				7746F04D1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m */,
 				77DB43731EF47E7600B1067C /* main.h */,
 				77DB43711EF47ADD00B1067C /* main.m */,
-				7786EE511F35E0A0001B6B5F /* VerifyPermissions.xib */,
+				7786EE511F35E0A0001B6B5F /* VerifyRepairPermissions.xib */,
 			);
 			path = EnhanceDiskUtility;
 			sourceTree = "<group>";
@@ -299,7 +304,7 @@
 				776811F61F3506BA0042DDBA /* RepairPermissionsUtility in Resources */,
 				77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */,
 				77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */,
-				7786EE521F35E0A0001B6B5F /* VerifyPermissions.xib in Resources */,
+				7786EE521F35E0A0001B6B5F /* VerifyRepairPermissions.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				77DB43721EF47ADD00B1067C /* main.m in Sources */,
+				7746F04E1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m in Sources */,
 				775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

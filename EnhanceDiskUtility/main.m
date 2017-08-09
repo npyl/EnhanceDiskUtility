@@ -131,222 +131,29 @@ void DUELog( NSString * str )
     #endif
 }
 
+
+#import "DUEVerifyRepairSheetController.h"
+
 @implementation DUEnhance : NSObject
 
-
-enum {
-    kSUCCESS = 0,
-    
-    kNO_BNDLPATH,
-    kNO_HELPERCALLER_EXEC,
-    kNO_HELPER_XPC_CONNECT,
-};
-
-- (unsigned)executeUtilityWithArguments:(NSArray*)arguments
+- (void)VerifyPermissions:(id)sender        // ** TODO ** Need to lock the disk handle ???
 {
-    // ** TODO ** Upon exit of DiskUtil we need to kill repairPermissions if running.
-    // ** TODO ** Tell people about the apple SMJobBlessUtil.py file ( they can use??? )
-    
-    //
-    //  Find Bundle Folder
-    //
-    
-    NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
-    NSString * bundlePath = nil;
-    
-    
-    for( NSBundle * bndl in [NSBundle allBundles] )
-        if( [[bndl bundleIdentifier] isEqualToString:kEnhanceDiskUtilityBundleIdentifier ] )
-            bundlePath = [bndl bundlePath];
-    
-    if( !bundlePath )
-    {
-        NSLog( @"failed to get bundle path!" );
-        return kNO_BNDLPATH;
-    }
-    
-    
-    
-    NSLog( @"BundlePath = %@", bundlePath );
-    
-    
-    //
-    //  Root or Normal User ?
-    //
-    
-    if( getuid() == 0 )
-        goto COMMUNICATIONS;
-    
-    
-    //
-    //  Call the HelperCaller
-    //
-    
-    NSString * helperCallerPath = [bundlePath stringByAppendingString:@"/Contents/Resources/SMJobBlessHelperCaller.app/Contents/MacOS/SMJobBlessHelperCaller"];
-    NSLog( @"HelperCallerPath = %@", helperCallerPath );
-    
-    NSTask * task = [[NSTask alloc] init];
-    [task setLaunchPath:helperCallerPath];
-    [task launch];
-    [task waitUntilExit];
-    
-    if( [task terminationStatus] != 0 )
-        return kNO_HELPERCALLER_EXEC;
-    
-
-     
-//    return kSUCCESS;
-    
-    
-    
-    
-    
-COMMUNICATIONS:
-    {
-        
-        //
-        //  Start IPC with Helper
-        //
-        
-        //
-        //  Find Resources folder
-        //
-        __block bool mustEndConnection = false;     //
-                                                    //  ** TODO ** What does __block do?
-                                                    //
-        
-        NSString * bundleResourcePath = [bundlePath stringByAppendingString:@"/Contents/Resources"];
-        NSLog( @"ResourcePath = %@", bundleResourcePath );
-        
-        xpc_connection_t connection = xpc_connection_create_mach_service( "org.npyl.EnhanceDiskUtility.SMJobBlessHelper", NULL, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
-        
-        if (!connection) {
-            NSLog( @"Failed to create XPC connection." );
-            return kNO_HELPER_XPC_CONNECT;
-        }
-        
-        xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
-            xpc_type_t type = xpc_get_type(event);
-            
-            if (type == XPC_TYPE_ERROR) {
-                
-                if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-                    NSLog( @"XPC connection interupted." );
-                    
-                } else if (event == XPC_ERROR_CONNECTION_INVALID) {
-                    NSLog( @"XPC connection invalid, releasing." );
-                    xpc_release(connection);
-                    
-                } else {
-                    NSLog( @"Unexpected XPC connection error." );
-                }
-                
-            } else {
-                NSLog( @"Unexpected XPC connection event." );
-            }
-        });
-        
-        xpc_connection_resume(connection);
-
-        
-        
-        //
-        //  Tell helper to run utility
-        //
-        
-        NSString * repairPermissionsUtilityPath = [bundlePath stringByAppendingString:@"/Contents/Resources/RepairPermissionsUtility"];
-
-
-        xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
-        const char* request = [[@"ver." stringByAppendingString:repairPermissionsUtilityPath] UTF8String];
-        xpc_dictionary_set_string(message, "request", request);
-        
-        xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
-            const char* response = xpc_dictionary_get_string(event, "reply");
-            NSLog( @"Received response: %s.", response );
-            
-            if( strcmp( response, "ver.starting" ) != 0 )
-            {
-                NSLog( @"Helper says something went wrong trying to run RepairPermissionsUtility!" );
-                mustEndConnection = true;
-            }
-        });
-
-        //
-        //  Wait for utility to exit
-        //
-        while( !mustEndConnection ) {
-            
-            xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
-            
-            
-            const char* request = "gv.rpu.end.reply";                // Give.RepairPermissionsUtility.Status ( we expect an x% value )
-            
-            
-            xpc_dictionary_set_string(message, "request", request);
-            
-            
-            
-            xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
-                const char* response = xpc_dictionary_get_string(event, "reply");
-                NSLog( @"Received response: %s.", response );
-                
-                if( strcmp( response, "rpu.did.end" ) == 0 )
-                    mustEndConnection = true;
-                else {
-                    //
-                    //  Update NSAlert View
-                    //
-                }
-            });
-        }
-        
-        //
-        //  ** TODO ** Stuff to close the connection!
-        //
-    }
-    
-    return kSUCCESS;
-}
-
-
-- (void)VerifyPermissions:(id)sender
-{
-    // ** TODO ** Need to lock the disk handle ???
     
     DUELog( @"Told to verify permissions" );
     
     NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
-    
-    unsigned status = [self executeUtilityWithArguments:@[ @"--verify", mountPoint ]];
-    
-    NSWindow * windowHandle = ZKHookIvar( self, NSWindow*, "_attachedToWindow" );
-    
-    NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
+  
+    DUEVerifyRepairSheetController * verifySheet = [[DUEVerifyRepairSheetController alloc] init];
+    [verifySheet showSheet:kVerifySheetIdentifier forMountPoint:mountPoint];
 
-    //verifyPermissions();
+    //
+    //  Verification finished => Lets deallocate stuff
+    //
     
-    /*
-    verifyPermissionsSheet = [[DUEVerifyPermissionsSheetController alloc] initWithWindowNibPath:[[[NSBundle bundleWithIdentifier:kEnhanceDiskUtilityBundleIdentifier] resourcePath] stringByAppendingString:@"/VerifyPermissions.nib"] owner:verifyPermissionsSheet];
-
+    //while ( ! [verifySheet didFinishVerifying] )    // ** TODO ** Replace this polling implementation with a faster one
+    //    ;
     
-    [windowHandle beginSheet:verifyPermissionsSheet.window  completionHandler:^(NSModalResponse returnCode) {
-        NSLog(@"Sheet closed");
-        
-        switch (returnCode) {
-            case NSModalResponseOK:
-                NSLog(@"Done button tapped in Custom Sheet");
-                break;
-            case NSModalResponseCancel:
-                NSLog(@"Cancel button tapped in Custom Sheet");
-                break;
-                
-            default:
-                break;
-        }
-        
-        verifyPermissionsSheet = nil;
-    }]; */
+    //[verifySheet release];
 }
 
 - (void)RepairPermissions:(id)sender
