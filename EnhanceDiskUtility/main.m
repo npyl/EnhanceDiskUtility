@@ -149,7 +149,7 @@ void DUELog( NSString * str )
     //
     //  Verification finished => Lets deallocate stuff
     //
-    
+    //
     //while ( ! [verifySheet didFinishVerifying] )    // ** TODO ** Replace this polling implementation with a faster one
     //    ;
     
