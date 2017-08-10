@@ -19,8 +19,10 @@ enum {
     BOOL didFinishRepairOrVerifyJob;
 }
 
-@property (assign) IBOutlet NSWindow * sheet;
-@property (assign) IBOutlet NSButton * doneButton;
+@property (assign) IBOutlet NSWindow *              sheet;
+@property (assign) IBOutlet NSScrollView *          logView;
+@property (assign) IBOutlet NSButton *              doneButton;
+@property (assign) IBOutlet NSProgressIndicator *   progressIndicator;
 
 - (void)showSheet:(int)sheetIdentifier forMountPoint:(NSString*)mountPoint;
 - (IBAction)closeSheet:(id)sender;

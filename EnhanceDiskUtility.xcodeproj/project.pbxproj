@@ -11,13 +11,13 @@
 		7746F04E1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7746F04D1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m */; };
 		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; };
 		776253E81EFB01C90070463D /* StorageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 776253E71EFB01C90070463D /* StorageKit.framework */; };
-		776811F61F3506BA0042DDBA /* RepairPermissionsUtility in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E461F311AF90041D107 /* RepairPermissionsUtility */; };
 		7778613E1F34E8E4007B145C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7778613D1F34E8E4007B145C /* main.m */; };
 		777861431F34E8E4007B145C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 777861421F34E8E4007B145C /* Assets.xcassets */; };
 		7778614C1F34E8F5007B145C /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 77F76DC91F34D82B00ADAD8B /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		7778614D1F34E928007B145C /* SMJobBlessHelperCaller.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7786EE521F35E0A0001B6B5F /* VerifyRepairPermissions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7786EE511F35E0A0001B6B5F /* VerifyRepairPermissions.xib */; };
 		77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */; };
+		77C69A3E1F3D027A0062C1CD /* RepairPermissionsUtility in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E461F311AF90041D107 /* RepairPermissionsUtility */; };
 		77DB43721EF47ADD00B1067C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DB43711EF47ADD00B1067C /* main.m */; };
 		77F76DD31F34D99500ADAD8B /* SMJobBlessHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DBCD0B1F32189A00186770 /* SMJobBlessHelper.m */; };
 /* End PBXBuildFile section */
@@ -293,6 +293,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77C69A3E1F3D027A0062C1CD /* RepairPermissionsUtility in Resources */,
 				777861431F34E8E4007B145C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -301,7 +302,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				776811F61F3506BA0042DDBA /* RepairPermissionsUtility in Resources */,
 				77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */,
 				77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */,
 				7786EE521F35E0A0001B6B5F /* VerifyRepairPermissions.xib in Resources */,

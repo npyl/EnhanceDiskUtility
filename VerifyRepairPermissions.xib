@@ -9,6 +9,8 @@
         <customObject id="-2" userLabel="File's Owner" customClass="DUEVerifyRepairSheetController">
             <connections>
                 <outlet property="doneButton" destination="mzT-zy-FIH" id="aQA-nN-jFD"/>
+                <outlet property="logView" destination="Sj8-bi-yK8" id="vr1-YL-nAz"/>
+                <outlet property="progressIndicator" destination="LqV-BT-Ki9" id="S7Q-LY-tfr"/>
                 <outlet property="sheet" destination="B7b-5i-lJv" id="nhD-M9-0SO"/>
             </connections>
         </customObject>

@@ -5,6 +5,8 @@
 //  Created by Nickolas Pylarinos on 16/06/2017.
 //  Copyright © 2017 ulcheats. All rights reserved.
 //
+//  The Licenses reside inside the EnhanceDiskUtility.bundle!
+//
 
 //
 //  This project uses the private framework StorageKit.framework ( located in /System/Library/PrivateFrameworks )
@@ -50,12 +52,13 @@
  *      4)  Check if ZKOrig functions actually work.
  *      ** TODO ** Check if this code works for cases when some are not visible
  *      ** TODO ** We need to deallocate the repair / verify toolbar item identifiers some time
- *
+ *      ** TODO ** There are actually more objects that need deallocation etc..
  */
 
 #import "main.h"
 #import "StorageKit.h"
 #import "ZKSwizzle/ZKSwizzle.h"
+#import "DUEVerifyRepairSheetController.h"
 
 #import <ServiceManagement/ServiceManagement.h>
 
@@ -132,8 +135,6 @@ void DUELog( NSString * str )
 }
 
 
-#import "DUEVerifyRepairSheetController.h"
-
 @implementation DUEnhance : NSObject
 
 - (void)VerifyPermissions:(id)sender        // ** TODO ** Need to lock the disk handle ???
@@ -153,7 +154,7 @@ void DUELog( NSString * str )
     //while ( ! [verifySheet didFinishVerifying] )    // ** TODO ** Replace this polling implementation with a faster one
     //    ;
     
-    //[verifySheet release];
+    //[verifySheet release];    // ** TODO ** add this
 }
 
 - (void)RepairPermissions:(id)sender

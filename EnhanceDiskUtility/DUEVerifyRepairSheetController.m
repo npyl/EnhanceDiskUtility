@@ -11,8 +11,18 @@
 
 @implementation DUEVerifyRepairSheetController
 
+enum {
+    kSUCCESS = 0,                   //  ** TODO ** PUT THESE IN COMMON.H as common DUEErrors
+    
+    kNO_BNDLPATH,
+    kNO_HELPERCALLER_EXEC,
+    kNO_HELPER_XPC_CONNECT,
+};
+
 @synthesize sheet = _sheet;
+@synthesize logView = _logView;
 @synthesize doneButton = _doneButton;
+@synthesize progressIndicator = _progressIndicator;
 
 - (instancetype)init
 {
@@ -22,14 +32,6 @@
     }
     return self;
 }
-
-enum {
-    kSUCCESS = 0,
-    
-    kNO_BNDLPATH,
-    kNO_HELPERCALLER_EXEC,
-    kNO_HELPER_XPC_CONNECT,
-};
 
 - (unsigned)executeUtilityWithArguments:(NSArray*)arguments
 {
@@ -84,10 +86,6 @@ enum {
     
     
     
-    return kSUCCESS;
-    
-    
-    
     
     
 COMMUNICATIONS:
@@ -101,11 +99,9 @@ COMMUNICATIONS:
         //  Find Resources folder
         //
         __block bool mustEndConnection = false;     //
-        //  ** TODO ** What does __block do?
-        //
-        
-        NSString * bundleResourcePath = [bundlePath stringByAppendingString:@"/Contents/Resources"];
-        NSLog( @"ResourcePath = %@", bundleResourcePath );
+                                                    //  ** TODO ** What does __block do?
+                                                    //
+
         
         xpc_connection_t connection = xpc_connection_create_mach_service( "org.npyl.EnhanceDiskUtility.SMJobBlessHelper", NULL, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
         
@@ -114,14 +110,21 @@ COMMUNICATIONS:
             return kNO_HELPER_XPC_CONNECT;
         }
         
-        xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
+        //
+        //  Tell helper to run utility
+        //
+        
+        xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+        const char* request = "START";
+        xpc_dictionary_set_string( message, "request", request );
+        
+        xpc_connection_send_message_with_reply( connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
             xpc_type_t type = xpc_get_type(event);
             
             if (type == XPC_TYPE_ERROR) {
                 
                 if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
                     NSLog( @"XPC connection interupted." );
-                    
                 } else if (event == XPC_ERROR_CONNECTION_INVALID) {
                     NSLog( @"XPC connection invalid, releasing." );
                     xpc_release(connection);
@@ -131,68 +134,37 @@ COMMUNICATIONS:
                 }
                 
             } else {
+                
+                xpc_object_t reply = xpc_dictionary_create_reply(event);
+                const char * replyString = xpc_dictionary_get_string( reply, "request" );
+                
+                if( strcmp( replyString, "STARTING" ) == 0 )
+                {
+                    //
+                    //  OK IT IS STARTING
+                    //  START RECEIVING THE OUTPUT LOG
+                    //
+                    
+                    mustEndConnection = true;
+                }
+                
+                if( strcmp( replyString, "FINISHING" ) == 0 )
+                {
+                    //
+                    //  OK ITS FINISHING
+                    //
+                }
+                
                 NSLog( @"Unexpected XPC connection event." );
+                mustEndConnection = true;
             }
+
         });
         
         xpc_connection_resume(connection);
-        
-        
-        
-        //
-        //  Tell helper to run utility
-        //
-        
-        NSString * repairPermissionsUtilityPath = [bundlePath stringByAppendingString:@"/Contents/Resources/RepairPermissionsUtility"];
-        
-        
-        xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
-        const char* request = [[@"ver." stringByAppendingString:repairPermissionsUtilityPath] UTF8String];
-        xpc_dictionary_set_string(message, "request", request);
-        
-        xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
-            const char* response = xpc_dictionary_get_string(event, "reply");
-            NSLog( @"Received response: %s.", response );
-            
-            if( strcmp( response, "ver.starting" ) != 0 )
-            {
-                NSLog( @"Helper says something went wrong trying to run RepairPermissionsUtility!" );
-                mustEndConnection = true;
-            }
-        });
-        
-        //
-        //  Wait for utility to exit
-        //
-        while( !mustEndConnection ) {
-            
-            xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
-            
-            
-            const char* request = "gv.rpu.end.reply";                // Give.RepairPermissionsUtility.Status ( we expect an x% value )
-            
-            
-            xpc_dictionary_set_string(message, "request", request);
-            
-            
-            
-            xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
-                const char* response = xpc_dictionary_get_string(event, "reply");
-                NSLog( @"Received response: %s.", response );
-                
-                if( strcmp( response, "rpu.did.end" ) == 0 )
-                    mustEndConnection = true;
-                else {
-                    //
-                    //  Update NSAlert View
-                    //
-                }
-            });
-        }
-        
-        //
-        //  ** TODO ** Stuff to close the connection!
-        //
+    
+        while( !mustEndConnection )
+            ;
     }
     
     return kSUCCESS;
@@ -213,20 +185,18 @@ COMMUNICATIONS:
     NSArray * arguments = nil;
     
     switch ( sheetIdentifier ) {
-        case kVerifySheetIdentifier:
+        case kVerifySheetIdentifier:    // run Verification
             
             arguments = [[NSArray alloc] initWithObjects:@"--verify", mountPoint, nil];     // ** TODO ** Should be --no-output ??
             
             break;
-        case kRepairSheetIdentifier:
+        case kRepairSheetIdentifier:    // run Repair
             break;
             
             arguments = [[NSArray alloc] initWithObjects:@"--repair", mountPoint, nil];     // ** TODO ** Should be --no-output ??
             
         default:
-            NSLog( @"Should hit here..." );
-            //  ** TODO ** Handle error with some way.
-            //
+            NSLog( @"Unexpected sheetIdentifier passed! Aborting!" );                       //  ** TODO ** Handle error with some way. ---> This is nice I think.
             return;
             
             break;
@@ -239,17 +209,20 @@ COMMUNICATIONS:
         didFinishRepairOrVerifyJob = YES;
     }];
     
+    [_progressIndicator startAnimation:nil];
     
     //
     //  Start the process
     //
     
     [self executeUtilityWithArguments:arguments];
+    
+    [_progressIndicator stopAnimation:nil];
 }
 
 - (IBAction)closeSheet:(id)sender
 {
-    [[NSApp mainWindow] endSheet:self.sheet];       // ** TODO ** Fix this----
+    [[NSApp mainWindow] endSheet:self.sheet];       // ** TODO ** What is the proper way for closing it???
     //    [self.sheet close];
     self.sheet = nil;
 }
