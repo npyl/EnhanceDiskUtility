@@ -43,12 +43,11 @@ enum {
     //
     
     NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
-    NSString * bundlePath = nil;
+    NSString * bundlePath = [[NSBundle bundleWithIdentifier:kEnhanceDiskUtilityBundleIdentifier] bundlePath];
     
-    
-    for( NSBundle * bndl in [NSBundle allBundles] )
-        if( [[bndl bundleIdentifier] isEqualToString:kEnhanceDiskUtilityBundleIdentifier ] )
-            bundlePath = [bndl bundlePath];
+//    for( NSBundle * bndl in [NSBundle allBundles] )
+//        if( [[bndl bundleIdentifier] isEqualToString:kEnhanceDiskUtilityBundleIdentifier ] )
+//            bundlePath = [bndl bundlePath];
     
     if( !bundlePath )
     {

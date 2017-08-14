@@ -12,9 +12,6 @@
 @import AppKit;
 
 @interface _due_SUWorkspaceViewController : NSViewController @end
-
-
-
 @interface DUEnhance : NSObject         // ** TODO ** Change that with NSObject <NSToolbarDelegate> ????
 
 - (void)VerifyPermissions:(id)sender;
