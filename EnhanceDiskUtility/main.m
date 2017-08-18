@@ -234,18 +234,30 @@ void DUELog( NSString * str )
     
     verifyPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier: kNSToolbarVerifyPermissionsItemIdentifier];
     repairPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier: kNSToolbarRepairPermissionsItemIdentifier];
-        
-    [verifyPermissionsItem setLabel:@"Verify Permissions"];
-    [verifyPermissionsItem setPaletteLabel:@"Verify Permissions"];        // ** TODO ** what does this do?
-    [verifyPermissionsItem setImage:[NSImage imageNamed:NSImageNameSmartBadgeTemplate]];
-    [verifyPermissionsItem setTarget:self];
-    [verifyPermissionsItem setAction:@selector(VerifyPermissions:)];
     
-    [repairPermissionsItem setLabel:@"Repair Permissions"];
-    [repairPermissionsItem setPaletteLabel:@"Repair Permissions"];    // ** TODO ** what does this do?
-    [repairPermissionsItem setImage:[NSImage imageNamed:NSImageNameMenuOnStateTemplate]];
-    [repairPermissionsItem setTarget:self];
-    [repairPermissionsItem setAction:@selector(RepairPermissions:)];
+    //
+    // Use a NSButton to match the other Toolbar items in Disk Utility
+    //
+    
+    NSButton *verifyPermissionsButton = [[NSButton alloc] initWithFrame:CGRectMake(0, 0, 42, 21)];
+    [verifyPermissionsButton setBezelStyle:NSTexturedRoundedBezelStyle];
+    [verifyPermissionsButton setButtonType:NSButtonTypeMomentaryPushIn];
+    [verifyPermissionsButton setTarget:self];
+    [verifyPermissionsButton setAction:@selector(VerifyPermissions:)];
+    [verifyPermissionsButton setImage:[NSImage imageNamed:NSImageNameSmartBadgeTemplate]];
+    [verifyPermissionsItem setLabel:@"Verify"];
+    [verifyPermissionsItem setPaletteLabel:@"Verify"];
+    [verifyPermissionsItem setView:verifyPermissionsButton];
+
+    NSButton *repairPermissionsButton = [[NSButton alloc] initWithFrame:CGRectMake(0, 0, 42, 21)];
+    [repairPermissionsButton setBezelStyle:NSTexturedRoundedBezelStyle];
+    [repairPermissionsButton setButtonType:NSButtonTypeMomentaryPushIn];
+    [repairPermissionsButton setTarget:self];
+    [repairPermissionsButton setAction:@selector(RepairPermissions:)];
+    [repairPermissionsButton setImage:[NSImage imageNamed:NSImageNameMenuOnStateTemplate]];
+    [repairPermissionsItem setLabel:@"Repair"];
+    [repairPermissionsItem setPaletteLabel:@"Repair"];
+    [repairPermissionsItem setView:repairPermissionsButton];
 }
 
 - (void)revalidateToolbar
@@ -299,6 +311,24 @@ void DUELog( NSString * str )
                 [toolbarHandle insertItemWithItemIdentifier:kNSToolbarVerifyPermissionsItemIdentifier atIndex:verifyPermissionsItemIndex];
                 [toolbarHandle insertItemWithItemIdentifier:kNSToolbarRepairPermissionsItemIdentifier atIndex:repairPermissionsItemIndex];
             });
+        });
+    }
+    
+    //
+    // Only show buttons as enabled if a device with a mount point is selected
+    //
+    
+    if (globalSelectedDiskHandle) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            NSString *mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
+            // NSLog(@"%@", mountPoint);
+            if (mountPoint) {
+                [verifyPermissionsItem setEnabled:true];
+                [repairPermissionsItem setEnabled:true];
+            } else {
+                [verifyPermissionsItem setEnabled:false];
+                [repairPermissionsItem setEnabled:false];
+            }
         });
     }
 }
