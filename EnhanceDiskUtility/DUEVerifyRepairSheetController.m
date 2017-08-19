@@ -263,8 +263,7 @@ COMMUNICATIONS:
 
 - (IBAction)closeSheet:(id)sender
 {
-    [[NSApp mainWindow] endSheet:self.sheet];       // ** TODO ** What is the proper way for closing it???
-    //    [self.sheet close];
+    [[NSApp mainWindow] endSheet:self.sheet];
     self.sheet = nil;
     
     
