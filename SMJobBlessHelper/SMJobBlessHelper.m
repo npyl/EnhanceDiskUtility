@@ -20,6 +20,10 @@
 NSTask * task = nil;        // ** TODO ** hmmm, make this more private??
 
 
+//
+//  ** TODO ** Add function for cleaning up files in /Library/LaunchDaemons, PrivilegedHelpers,
+//
+
 
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
     //

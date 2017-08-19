@@ -15,9 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.1</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2017 ulcheats. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
@@ -28,7 +28,7 @@
 			<key>MinBundleVersion</key>
 			<string>1579.1</string>
 			<key>MaxBundleVersion</key>
-			<string>1579.1</string>
+			<string>9999.9</string>
 			<key>BundleIdentifier</key>
 			<string>com.apple.DiskUtility</string>
 		</dict>

@@ -45,9 +45,6 @@ enum {
     NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
     NSString * bundlePath = [[NSBundle bundleWithIdentifier:kEnhanceDiskUtilityBundleIdentifier] bundlePath];
     
-//    for( NSBundle * bndl in [NSBundle allBundles] )
-//        if( [[bndl bundleIdentifier] isEqualToString:kEnhanceDiskUtilityBundleIdentifier ] )
-//            bundlePath = [bndl bundlePath];
     
     if( !bundlePath )
     {
@@ -85,6 +82,10 @@ enum {
     
     
     
+        return kSUCCESS;
+    
+    
+    
     
     
 COMMUNICATIONS:
@@ -100,7 +101,9 @@ COMMUNICATIONS:
         __block bool mustEndConnection = false;     //
                                                     //  ** TODO ** What does __block do?
                                                     //
-
+        
+        NSString * bundleResourcePath = [bundlePath stringByAppendingString:@"/Contents/Resources"];
+        NSLog( @"ResourcePath = %@", bundleResourcePath );
         
         xpc_connection_t connection = xpc_connection_create_mach_service( "org.npyl.EnhanceDiskUtility.SMJobBlessHelper", NULL, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
         
@@ -109,21 +112,14 @@ COMMUNICATIONS:
             return kNO_HELPER_XPC_CONNECT;
         }
         
-        //
-        //  Tell helper to run utility
-        //
-        
-        xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
-        const char* request = "START";
-        xpc_dictionary_set_string( message, "request", request );
-        
-        xpc_connection_send_message_with_reply( connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
+        xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
             xpc_type_t type = xpc_get_type(event);
             
             if (type == XPC_TYPE_ERROR) {
                 
                 if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
                     NSLog( @"XPC connection interupted." );
+                    
                 } else if (event == XPC_ERROR_CONNECTION_INVALID) {
                     NSLog( @"XPC connection invalid, releasing." );
                     xpc_release(connection);
@@ -133,40 +129,83 @@ COMMUNICATIONS:
                 }
                 
             } else {
-                
-                xpc_object_t reply = xpc_dictionary_create_reply(event);
-                const char * replyString = xpc_dictionary_get_string( reply, "request" );
-                
-                if( strcmp( replyString, "STARTING" ) == 0 )
-                {
-                    //
-                    //  OK IT IS STARTING
-                    //  START RECEIVING THE OUTPUT LOG
-                    //
-                    
-                    mustEndConnection = true;
-                }
-                
-                if( strcmp( replyString, "FINISHING" ) == 0 )
-                {
-                    //
-                    //  OK ITS FINISHING
-                    //
-                }
-                
                 NSLog( @"Unexpected XPC connection event." );
-                mustEndConnection = true;
             }
-
         });
         
         xpc_connection_resume(connection);
-    
-        while( !mustEndConnection )
-            ;
+        
+        
+        //
+        //  Tell helper to run utility
+        //
+        
+        //
+        //  Construct an array of the arguments
+        //
+        
+        //
+        //  Send it to helper
+        //
+        
+        //
+        //  Reply should be GOT_ARGS
+        //
+        
+        NSString * repairPermissionsUtilityPath = [bundlePath stringByAppendingString:@"/Contents/Resources/RepairPermissionsUtility"];
+
+        xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+        const char* request = "";
+        xpc_dictionary_set_string(message, "request", request);
+        
+        xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
+            const char* response = xpc_dictionary_get_string(event, "reply");
+            NSLog( @"Received response: %s.", response );
+            
+            if( strcmp( response, "ver.starting" ) != 0 )
+            {
+                NSLog( @"Helper says something went wrong trying to run RepairPermissionsUtility!" );
+                mustEndConnection = true;
+            }
+        });
+        
+        //
+        //  Wait for utility to exit
+        //
+        while( !mustEndConnection ) {
+            
+            xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
+            
+            
+            const char* request = "gv.rpu.end.reply";                // Give.RepairPermissionsUtility.Status ( we expect an x% value )
+            
+            
+            xpc_dictionary_set_string(message, "request", request);
+            
+            
+            
+            xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
+                const char* response = xpc_dictionary_get_string(event, "reply");
+                NSLog( @"Received response: %s.", response );
+                
+                if( strcmp( response, "rpu.did.end" ) == 0 )
+                    mustEndConnection = true;
+                else {
+                    //
+                    //  Update NSAlert View
+                    //
+                }
+            });
+        }
+        
+        
+        //
+        //  ** TODO ** Stuff to close the connection!
+        //
     }
     
     return kSUCCESS;
+    
 }
 
 /*
@@ -214,7 +253,10 @@ COMMUNICATIONS:
     //  Start the process
     //
     
-    [self executeUtilityWithArguments:arguments];
+    NSLog( @"Ended with status: %i", [self executeUtilityWithArguments:arguments] );        //
+                                                                                            //  this sends data to the sheetScrollView from the RepairPermissionsUtility
+                                                                                            //  once for any reason this ends the sheet waits there to be closed with a button
+                                                                                            //
     
     [_progressIndicator stopAnimation:nil];
 }
@@ -224,6 +266,13 @@ COMMUNICATIONS:
     [[NSApp mainWindow] endSheet:self.sheet];       // ** TODO ** What is the proper way for closing it???
     //    [self.sheet close];
     self.sheet = nil;
+    
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog( @"Releasing sheet controller!" );                    //
+        [self release];                                             //  I cant think of another way to ensure the sheetController gets released the right time
+                                                                    //
+    });
 }
 
 - (BOOL)didFinishVerifying {

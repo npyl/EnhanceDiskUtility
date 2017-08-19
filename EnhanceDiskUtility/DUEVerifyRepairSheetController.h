@@ -16,7 +16,7 @@ enum {
 
 @interface DUEVerifyRepairSheetController : NSObject
 {    
-    BOOL didFinishRepairOrVerifyJob;
+    BOOL    didFinishRepairOrVerifyJob;
 }
 
 @property (assign) IBOutlet NSWindow *              sheet;
