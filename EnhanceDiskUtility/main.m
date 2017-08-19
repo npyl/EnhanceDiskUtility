@@ -138,24 +138,14 @@ void DUELog( NSString * str )
 
 @implementation DUEnhance : NSObject
 
-- (void)VerifyPermissions:(id)sender        // ** TODO ** Need to lock the disk handle ???
+- (void)VerifyPermissions:(id)sender
 {
-    
     DUELog( @"Told to verify permissions" );
     
     NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
   
     DUEVerifyRepairSheetController * verifySheet = [[DUEVerifyRepairSheetController alloc] init];
     [verifySheet showSheet:kVerifySheetIdentifier forMountPoint:mountPoint];
-
-    //
-    //  Verification finished => Lets deallocate stuff
-    //
-    //
-    //while ( ! [verifySheet didFinishVerifying] )    // ** TODO ** Replace this polling implementation with a faster one
-    //    ;
-    
-    //[verifySheet release];    // ** TODO ** add this
 }
 
 - (void)RepairPermissions:(id)sender
