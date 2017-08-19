@@ -177,6 +177,10 @@ void DUELog( NSString * str )
     
     // run wolf's repair permissions app.
     
+    NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
+    
+    DUEVerifyRepairSheetController * repairSheet = [[DUEVerifyRepairSheetController alloc] init];
+    [repairSheet showSheet:kRepairSheetIdentifier forMountPoint:mountPoint];
 }
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar      /* Overrides the default function */

@@ -7,7 +7,7 @@
 //
 
 /*
- *  ARC is disabled!
+ *  ARC is ** ENABLED **!
  */
 
 #include <syslog.h>
@@ -23,16 +23,16 @@ NSTask * task = nil;        // ** TODO ** hmmm, make this more private??
 //
 //  ** TODO ** Add function for cleaning up files in /Library/LaunchDaemons, PrivilegedHelpers,
 //
+//
+//  ** TODO * Handle the events indicating error --> terminate the helper.
+//
 
 
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
     //
-    //  This code here should wait for the events: START, FINISH, and all sorts of XPC errors such as XPC_ERROR_CONNECTION_INVALID etc.
+    //  This code waits for the following events: error-related events OR
     //
     
-    //
-    //  ** TODO * Handle the events indicating error --> terminate the helper.
-    //
     
     syslog(LOG_NOTICE, "Received event in helper.");
     
@@ -53,82 +53,51 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         NSLog( @"got XPC ERROR event" );
 	} else {
         //
-        //  The event isn't an error. Either a START or FINISH or an unexpected event
+        //  Read EnhanceDiskUtility's given |mode| and |mountPoint|
         //
         
-        xpc_connection_t remote = xpc_dictionary_get_remote_connection(event);
+        xpc_connection_t connection = xpc_dictionary_get_remote_connection(event);
         xpc_object_t reply = xpc_dictionary_create_reply(event);
-        const char * replyString = xpc_dictionary_get_string( reply, "request" );
         
-//        xpc_release(reply);
+        const char * mode = xpc_dictionary_get_string( connection, "mode" );
+        const char * mountPoint = xpc_dictionary_get_string( connection, "mountPoint" );
         
-        if( strcmp( replyString, "START" ) == 0 )
-        {
-            NSLog( @"got START event" );
-            
-            //
-            //  Reply that we got the START signal
-            //
-            
-            xpc_dictionary_set_string( reply, "reply", "STARTING" );
-            xpc_connection_send_message(remote, reply);
-            xpc_release(reply);
-
-            
-            //
-            //  Start the Operation
-            //
-            
-            for( NSString * pathComponent in [[[NSBundle mainBundle] resourceURL] pathComponents] )
-                NSLog( @"%@", pathComponent );
-            
-            
-            task = [[NSTask alloc] init];
-            [task setLaunchPath:@"../../Resources/RepairPermissionsUtility"];
-            [task setArguments:@[@"--verify", @"/", @"--no-output"]];
-            
-            task.standardOutput = [NSPipe pipe];
-            [[task.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle *file) {
-                NSData *data = [file availableData]; // this will read to EOF, so call only once
-                NSLog(@"Task output! %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-                
-                //
-                //  Send data to our sheet controller
-                //
-                
-                // ** TODO **
-            }];
-            
-//            [task launch];
-//            [task waitUntilExit];
-            
-            return;
-        }
-        
-        if( strcmp( replyString, "FINISH" ) == 0 )
-        {
-            xpc_dictionary_set_string( reply, "reply", "FINISHING" );
-            xpc_connection_send_message(remote, reply);
-            xpc_release(reply);
-            
-            //
-            //  Immideately shutdown everything...
-            //
-  
-            [task launch];
-            [task waitUntilExit];
-            
-            exit( -1 );     // ** TODO ** Ehmm this is temporary to be replaced...
-            
-            return;
-        }
-        
+        NSLog( @"got START event" );
         
         //
-        //  What? Got UNEXPECTED EVENT
+        //  Reply that we got the START signal
         //
         
-        printf( "XPC_Peer_Event_Handler: Unexpected event received! Have you updated the EnhanceDiskUtility code but not the SMJobBlessHelper?" );
+        //xpc_dictionary_set_string( reply, "reply", "STARTING" );
+        //xpc_connection_send_message(remote, reply);
+        
+        //
+        //  Start the Operation
+        //
+        
+        for( NSString * pathComponent in [[[NSBundle mainBundle] resourceURL] pathComponents] )
+            NSLog( @"%@", pathComponent );
+        
+        
+        task = [[NSTask alloc] init];
+        [task setLaunchPath:@"../../Resources/RepairPermissionsUtility"];
+//        [task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint], @"--no-output"]];
+        [task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint] ]];
+        
+        task.standardOutput = [NSPipe pipe];
+        [[task.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle *file) {
+            NSData *data = [file availableData]; // this will read to EOF, so call only once
+            NSLog(@"Task output! %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            
+            
+            //                xpc_connection_send_message(, <#xpc_object_t  _Nonnull message#>)
+        }];
+        
+        //            [task launch];
+        //            [task waitUntilExit];
+        //            [task release];
+        
+        return;
     }
 }
 
@@ -162,7 +131,7 @@ int main(int argc, const char *argv[]) {
     
     dispatch_main();
     
-    xpc_release(service);
+    //xpc_release(service);
 
     return EXIT_SUCCESS;
 }

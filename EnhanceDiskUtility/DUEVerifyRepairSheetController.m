@@ -82,8 +82,6 @@ enum {
     
     
     
-        return kSUCCESS;
-    
     
     
     
@@ -98,9 +96,9 @@ COMMUNICATIONS:
         //
         //  Find Resources folder
         //
-        __block bool mustEndConnection = false;     //
-                                                    //  ** TODO ** What does __block do?
-                                                    //
+        
+        __block BOOL somethingFailed = NO;
+        
         
         NSString * bundleResourcePath = [bundlePath stringByAppendingString:@"/Contents/Resources"];
         NSLog( @"ResourcePath = %@", bundleResourcePath );
@@ -123,13 +121,14 @@ COMMUNICATIONS:
                 } else if (event == XPC_ERROR_CONNECTION_INVALID) {
                     NSLog( @"XPC connection invalid, releasing." );
                     xpc_release(connection);
-                    
                 } else {
                     NSLog( @"Unexpected XPC connection error." );
+                    xpc_release(connection);
                 }
                 
             } else {
                 NSLog( @"Unexpected XPC connection event." );
+                xpc_release(connection);
             }
         });
         
@@ -140,9 +139,47 @@ COMMUNICATIONS:
         //  Tell helper to run utility
         //
         
+        
+        xpc_object_t initialMessage = xpc_dictionary_create(NULL, NULL, 0);
+        
+        const char* mode = [[arguments objectAtIndex:0] UTF8String];
+        const char* mountPoint = [[arguments objectAtIndex:1] UTF8String];
+        
         //
         //  Construct an array of the arguments
         //
+        xpc_dictionary_set_string(initialMessage, "mode", mode);
+        xpc_dictionary_set_string(initialMessage, "mountPoint", mountPoint);
+        
+        
+        xpc_connection_send_message_with_reply(connection, initialMessage, dispatch_get_main_queue(), ^(xpc_object_t event) {
+            const char* responseForMode = xpc_dictionary_get_string( event, "mode" );
+            const char* responseForMountPoint = xpc_dictionary_get_string( event, "mountPoint" );
+
+            if( strcmp( responseForMode, "GOT_MODE" ) == 0 &&
+               strcmp( responseForMountPoint, "GOT_MNTPOINT" ) == 0 ) {
+                // GREAT!
+            } else {
+                NSLog( @"Failed to send correct mode ( Verify / Repair ) or mountPoint to Helper via XPC." );
+                
+                
+                xpc_connection_cancel(connection);
+                xpc_release(initialMessage);
+                
+                somethingFailed = YES;
+            }
+        });
+
+        if ( somethingFailed ) return 1000;
+        
+        
+        
+        //
+        //  Cleanup
+        //
+        xpc_release( initialMessage );
+        
+        
         
         //
         //  Send it to helper
@@ -151,6 +188,12 @@ COMMUNICATIONS:
         //
         //  Reply should be GOT_ARGS
         //
+        
+        
+        
+        /*
+        __block BOOL mustEndConnection = NO;
+        
         
         NSString * repairPermissionsUtilityPath = [bundlePath stringByAppendingString:@"/Contents/Resources/RepairPermissionsUtility"];
 
@@ -202,6 +245,7 @@ COMMUNICATIONS:
         //
         //  ** TODO ** Stuff to close the connection!
         //
+         */
     }
     
     return kSUCCESS;

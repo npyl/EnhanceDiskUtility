@@ -510,7 +510,7 @@
 		77F76DCE1F34D82B00ADAD8B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer: n.pylarinos@hotmail.com (C674784ZBL)";
 				DEVELOPMENT_TEAM = CC63MSFH9N;
 				INFOPLIST_FILE = "$(SRCROOT)/SMJobBlessHelper/SMJobBlessHelper-Info.plist";
@@ -535,7 +535,7 @@
 		77F76DCF1F34D82B00ADAD8B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer: n.pylarinos@hotmail.com (C674784ZBL)";
 				DEVELOPMENT_TEAM = CC63MSFH9N;
 				INFOPLIST_FILE = "$(SRCROOT)/SMJobBlessHelper/SMJobBlessHelper-Info.plist";
