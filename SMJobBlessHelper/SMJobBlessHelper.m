@@ -55,47 +55,49 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         //
         //  Read EnhanceDiskUtility's given |mode| and |mountPoint|
         //
+
+        NSLog( @"got START event" );
+
         
         xpc_connection_t connection = xpc_dictionary_get_remote_connection(event);
-        xpc_object_t reply = xpc_dictionary_create_reply(event);
         
         const char * mode = xpc_dictionary_get_string( connection, "mode" );
         const char * mountPoint = xpc_dictionary_get_string( connection, "mountPoint" );
         
-        NSLog( @"got START event" );
-        
         //
-        //  Reply that we got the START signal
+        //  Inform client we got the information needed
         //
+        xpc_object_t reply = xpc_dictionary_create_reply(event);
+        xpc_dictionary_set_string( reply, "mode", "GOT_MODE" );
+        xpc_dictionary_set_string( reply, "mountPoint", "GOT_MNTPOINT" );
+        xpc_connection_send_message( connection, reply );
         
-        //xpc_dictionary_set_string( reply, "reply", "STARTING" );
-        //xpc_connection_send_message(remote, reply);
         
         //
         //  Start the Operation
         //
-        
         for( NSString * pathComponent in [[[NSBundle mainBundle] resourceURL] pathComponents] )
             NSLog( @"%@", pathComponent );
         
         
         task = [[NSTask alloc] init];
         [task setLaunchPath:@"../../Resources/RepairPermissionsUtility"];
-//        [task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint], @"--no-output"]];
         [task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint] ]];
         
         task.standardOutput = [NSPipe pipe];
         [[task.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle *file) {
             NSData *data = [file availableData]; // this will read to EOF, so call only once
-            NSLog(@"Task output! %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            NSString * stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            xpc_object_t dataMessage = xpc_string_create( [stringData UTF8String] );
+            xpc_connection_send_message( connection, dataMessage );
             
-            
-            //                xpc_connection_send_message(, <#xpc_object_t  _Nonnull message#>)
+            NSLog(@"Task output! %@", stringData );
         }];
         
-        //            [task launch];
-        //            [task waitUntilExit];
-        //            [task release];
+        // ** TODO ** Set a selector for calling when the task exits which will exit() this helper
+        
+        [task launch];
+        [task waitUntilExit];
         
         return;
     }

@@ -117,7 +117,6 @@ COMMUNICATIONS:
                 
                 if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
                     NSLog( @"XPC connection interupted." );
-                    
                 } else if (event == XPC_ERROR_CONNECTION_INVALID) {
                     NSLog( @"XPC connection invalid, releasing." );
                     xpc_release(connection);
@@ -145,6 +144,8 @@ COMMUNICATIONS:
         const char* mode = [[arguments objectAtIndex:0] UTF8String];
         const char* mountPoint = [[arguments objectAtIndex:1] UTF8String];
         
+        NSLog( @"mode = %s\nmntPoint = %s", mode, mountPoint );
+        
         //
         //  Construct an array of the arguments
         //
@@ -157,7 +158,8 @@ COMMUNICATIONS:
             const char* responseForMountPoint = xpc_dictionary_get_string( event, "mountPoint" );
 
             if( strcmp( responseForMode, "GOT_MODE" ) == 0 &&
-               strcmp( responseForMountPoint, "GOT_MNTPOINT" ) == 0 ) {
+                strcmp( responseForMountPoint, "GOT_MNTPOINT" ) == 0 )
+            {
                 // GREAT!
             } else {
                 NSLog( @"Failed to send correct mode ( Verify / Repair ) or mountPoint to Helper via XPC." );
@@ -249,7 +251,6 @@ COMMUNICATIONS:
     }
     
     return kSUCCESS;
-    
 }
 
 /*
@@ -273,10 +274,10 @@ COMMUNICATIONS:
             
             break;
         case kRepairSheetIdentifier:    // run Repair
-            break;
             
             arguments = [[NSArray alloc] initWithObjects:@"--repair", mountPoint, nil];     // ** TODO ** Should be --no-output ??
-            
+
+            break;
         default:
             NSLog( @"Unexpected sheetIdentifier passed! Aborting!" );                       //  ** TODO ** Handle error with some way. ---> This is nice I think.
             return;
