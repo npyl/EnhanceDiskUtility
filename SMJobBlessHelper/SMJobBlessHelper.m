@@ -17,11 +17,9 @@
 
 
 
-NSTask * task = nil;        // ** TODO ** hmmm, make this more private??
-
-
 //
 //  ** TODO ** Add function for cleaning up files in /Library/LaunchDaemons, PrivilegedHelpers,
+//      see: https://stackoverflow.com/questions/24040765/communicate-with-another-app-using-xpc
 //
 //
 //  ** TODO * Handle the events indicating error --> terminate the helper.
@@ -61,8 +59,17 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         
         xpc_connection_t connection = xpc_dictionary_get_remote_connection(event);
         
-        const char * mode = xpc_dictionary_get_string( connection, "mode" );
-        const char * mountPoint = xpc_dictionary_get_string( connection, "mountPoint" );
+        const char * mode = xpc_dictionary_get_string( event, "mode" );
+        const char * mountPoint = xpc_dictionary_get_string( event, "mountPoint" );
+        const char * repairPermissionsUtilityPath = xpc_dictionary_get_string( event, "repairPermissionsUtilityPath" );
+        
+        if ( strcmp( mode, "--verify" ) != 0 && strcmp( mode, "--repair" ) != 0 )
+        {
+            NSLog( @"Received bad mode information!" );
+            return;
+        }
+        
+        NSLog( @"mode = %s\nmntPoint = %s\nrepairPermissionsUtilityPath = %s", mode, mountPoint, repairPermissionsUtilityPath );
         
         //
         //  Inform client we got the information needed
@@ -76,20 +83,17 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         //
         //  Start the Operation
         //
-        for( NSString * pathComponent in [[[NSBundle mainBundle] resourceURL] pathComponents] )
-            NSLog( @"%@", pathComponent );
-        
-        
-        task = [[NSTask alloc] init];
-        [task setLaunchPath:@"../../Resources/RepairPermissionsUtility"];
+        NSTask * task = [[NSTask alloc] init];
+        [task setLaunchPath:[NSString stringWithUTF8String:repairPermissionsUtilityPath]];
         [task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint] ]];
         
         task.standardOutput = [NSPipe pipe];
         [[task.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle *file) {
             NSData *data = [file availableData]; // this will read to EOF, so call only once
             NSString * stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            xpc_object_t dataMessage = xpc_string_create( [stringData UTF8String] );
-            xpc_connection_send_message( connection, dataMessage );
+            
+            //xpc_object_t dataMessage = xpc_string_create( [stringData UTF8String] );
+            //xpc_connection_send_message( connection, dataMessage );
             
             NSLog(@"Task output! %@", stringData );
         }];
@@ -135,6 +139,6 @@ int main(int argc, const char *argv[]) {
     
     //xpc_release(service);
 
-    return EXIT_SUCCESS;
+    return EXIT_SUCCESS;        // ** TODO ** should this be EXIT_FAILURE ??? and xpc_main()???
 }
 

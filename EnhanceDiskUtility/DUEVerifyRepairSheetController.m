@@ -28,7 +28,6 @@ enum {
 {
     self = [super init];
     if (self) {
-        didFinishRepairOrVerifyJob = NO;
     }
     return self;
 }
@@ -143,25 +142,32 @@ COMMUNICATIONS:
         
         const char* mode = [[arguments objectAtIndex:0] UTF8String];
         const char* mountPoint = [[arguments objectAtIndex:1] UTF8String];
+        const char* repairPermissionsUtilityPath = [[bundleResourcePath stringByAppendingString:@"/RepairPermissionsUtility"] UTF8String];
         
-        NSLog( @"mode = %s\nmntPoint = %s", mode, mountPoint );
         
         //
-        //  Construct an array of the arguments
+        //  Construct a dictionary of the arguments
         //
         xpc_dictionary_set_string(initialMessage, "mode", mode);
         xpc_dictionary_set_string(initialMessage, "mountPoint", mountPoint);
+        xpc_dictionary_set_string(initialMessage, "repairPermissionsUtilityPath", repairPermissionsUtilityPath);
         
         
         xpc_connection_send_message_with_reply(connection, initialMessage, dispatch_get_main_queue(), ^(xpc_object_t event) {
             const char* responseForMode = xpc_dictionary_get_string( event, "mode" );
             const char* responseForMountPoint = xpc_dictionary_get_string( event, "mountPoint" );
 
-            if( strcmp( responseForMode, "GOT_MODE" ) == 0 &&
-                strcmp( responseForMountPoint, "GOT_MNTPOINT" ) == 0 )
+            NSLog(@"respMode = %s\nrespMNTPoint = %s", responseForMode, responseForMountPoint );
+            
+            if ( !(responseForMode && responseForMountPoint) )
             {
-                // GREAT!
-            } else {
+                somethingFailed = YES;
+                return;
+            }
+            
+            if ( strcmp( responseForMode,        "GOT_MODE" )       != 0    ||
+                 strcmp( responseForMountPoint,  "GOT_MNTPOINT" )   != 0 )
+            {
                 NSLog( @"Failed to send correct mode ( Verify / Repair ) or mountPoint to Helper via XPC." );
                 
                 
@@ -169,85 +175,17 @@ COMMUNICATIONS:
                 xpc_release(initialMessage);
                 
                 somethingFailed = YES;
+                return;
             }
         });
 
-        if ( somethingFailed ) return 1000;
-        
-        
-        
         //
         //  Cleanup
         //
         xpc_release( initialMessage );
         
         
-        
-        //
-        //  Send it to helper
-        //
-        
-        //
-        //  Reply should be GOT_ARGS
-        //
-        
-        
-        
-        /*
-        __block BOOL mustEndConnection = NO;
-        
-        
-        NSString * repairPermissionsUtilityPath = [bundlePath stringByAppendingString:@"/Contents/Resources/RepairPermissionsUtility"];
-
-        xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
-        const char* request = "";
-        xpc_dictionary_set_string(message, "request", request);
-        
-        xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
-            const char* response = xpc_dictionary_get_string(event, "reply");
-            NSLog( @"Received response: %s.", response );
-            
-            if( strcmp( response, "ver.starting" ) != 0 )
-            {
-                NSLog( @"Helper says something went wrong trying to run RepairPermissionsUtility!" );
-                mustEndConnection = true;
-            }
-        });
-        
-        //
-        //  Wait for utility to exit
-        //
-        while( !mustEndConnection ) {
-            
-            xpc_object_t message = xpc_dictionary_create(NULL, NULL, 0);
-            
-            
-            const char* request = "gv.rpu.end.reply";                // Give.RepairPermissionsUtility.Status ( we expect an x% value )
-            
-            
-            xpc_dictionary_set_string(message, "request", request);
-            
-            
-            
-            xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {
-                const char* response = xpc_dictionary_get_string(event, "reply");
-                NSLog( @"Received response: %s.", response );
-                
-                if( strcmp( response, "rpu.did.end" ) == 0 )
-                    mustEndConnection = true;
-                else {
-                    //
-                    //  Update NSAlert View
-                    //
-                }
-            });
-        }
-        
-        
-        //
-        //  ** TODO ** Stuff to close the connection!
-        //
-         */
+        if ( somethingFailed ) return 1000;
     }
     
     return kSUCCESS;
@@ -266,6 +204,8 @@ COMMUNICATIONS:
 {
     NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";        // ** TODO ** This should reside in common.h
     NSArray * arguments = nil;
+    
+    NSLog( @"%i,%i", kVerifySheetIdentifier, kRepairSheetIdentifier );
     
     switch ( sheetIdentifier ) {
         case kVerifySheetIdentifier:    // run Verification
@@ -288,9 +228,7 @@ COMMUNICATIONS:
     if ( !_sheet )
         [[NSBundle bundleWithIdentifier:kEnhanceDiskUtilityBundleIdentifier] loadNibNamed:@"VerifyRepairPermissions" owner:self topLevelObjects:nil];
     
-    [[NSApp mainWindow] beginSheet:self.sheet completionHandler:^(NSModalResponse returnCode) {
-        didFinishRepairOrVerifyJob = YES;
-    }];
+    [[NSApp mainWindow] beginSheet:self.sheet completionHandler:^(NSModalResponse returnCode) {}];
     
     [_progressIndicator startAnimation:nil];
     
@@ -317,13 +255,6 @@ COMMUNICATIONS:
         [self release];                                             //  I cant think of another way to ensure the sheetController gets released the right time
                                                                     //
     });
-}
-
-- (BOOL)didFinishVerifying {
-    return didFinishRepairOrVerifyJob;
-}
-- (BOOL)didFinishRepairing {
-    return didFinishRepairOrVerifyJob;
 }
 
 @end

@@ -15,9 +15,6 @@ enum {
 };
 
 @interface DUEVerifyRepairSheetController : NSObject
-{    
-    BOOL    didFinishRepairOrVerifyJob;
-}
 
 @property (assign) IBOutlet NSWindow *              sheet;
 @property (assign) IBOutlet NSScrollView *          logView;
@@ -26,8 +23,5 @@ enum {
 
 - (void)showSheet:(int)sheetIdentifier forMountPoint:(NSString*)mountPoint;
 - (IBAction)closeSheet:(id)sender;
-
-- (BOOL)didFinishVerifying;
-- (BOOL)didFinishRepairing;
 
 @end
