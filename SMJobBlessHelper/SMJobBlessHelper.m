@@ -18,7 +18,7 @@
 
 
 //
-//  ** TODO ** Add function for cleaning up files in /Library/LaunchDaemons, PrivilegedHelpers,
+//  -- THESE ARE NOT NEEDED -- ** TODO ** Add function for cleaning up files in /Library/LaunchDaemons, PrivilegedHelpers,
 //      see: https://stackoverflow.com/questions/24040765/communicate-with-another-app-using-xpc
 //
 //
@@ -28,11 +28,15 @@
 
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
     //
-    //  This code waits for the following events: error-related events OR
+    //  This code waits for the following events: error-related events OR information from client(=EnhanceDiskUtility) for starting the repair job
     //
-    
-    
+
     syslog(LOG_NOTICE, "Received event in helper.");
+
+    // the utility
+    NSTask * task = nil;
+    
+    
     
 	xpc_type_t type = xpc_get_type(event);
     
@@ -43,12 +47,15 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
 			// the connection is in an invalid state, and you do not need to
 			// call xpc_connection_cancel(). Just tear down any associated state
 			// here.
-            
+            NSLog(@"CONNECTION_INVALID");
 		} else if (event == XPC_ERROR_TERMINATION_IMMINENT) {
 			// Handle per-connection termination cleanup.
-		}
+            NSLog(@"TERMINATION_IMMINENT");
+        } else {
+            NSLog( @"Got unexpected (and unsupported) XPC ERROR" );
+        }
         
-        NSLog( @"got XPC ERROR event" );
+        
 	} else {
         //
         //  Read EnhanceDiskUtility's given |mode| and |mountPoint|
@@ -62,6 +69,9 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         const char * mode = xpc_dictionary_get_string( event, "mode" );
         const char * mountPoint = xpc_dictionary_get_string( event, "mountPoint" );
         const char * repairPermissionsUtilityPath = xpc_dictionary_get_string( event, "repairPermissionsUtilityPath" );
+        
+        if (!mode || !mountPoint || !repairPermissionsUtilityPath )
+            return;
         
         if ( strcmp( mode, "--verify" ) != 0 && strcmp( mode, "--repair" ) != 0 )
         {
@@ -83,7 +93,9 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         //
         //  Start the Operation
         //
-        NSTask * task = [[NSTask alloc] init];
+        xpc_object_t utilityData = xpc_dictionary_create(NULL, NULL, 0);
+        
+        task = [[NSTask alloc] init];
         [task setLaunchPath:[NSString stringWithUTF8String:repairPermissionsUtilityPath]];
         [task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint] ]];
         
@@ -92,8 +104,10 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             NSData *data = [file availableData]; // this will read to EOF, so call only once
             NSString * stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             
-            //xpc_object_t dataMessage = xpc_string_create( [stringData UTF8String] );
-            //xpc_connection_send_message( connection, dataMessage );
+            xpc_dictionary_set_string( utilityData, "utilityData", [stringData UTF8String] );
+            //xpc_dictionary_set_string( reply, "finished", "YES" );
+            xpc_connection_send_message( connection, utilityData );
+
             
             NSLog(@"Task output! %@", stringData );
         }];
@@ -102,8 +116,9 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         
         [task launch];
         [task waitUntilExit];
-        
-        return;
+
+        xpc_connection_cancel(connection);
+        exit(EXIT_SUCCESS);
     }
 }
 
@@ -137,8 +152,6 @@ int main(int argc, const char *argv[]) {
     
     dispatch_main();
     
-    //xpc_release(service);
-
     return EXIT_SUCCESS;        // ** TODO ** should this be EXIT_FAILURE ??? and xpc_main()???
 }
 

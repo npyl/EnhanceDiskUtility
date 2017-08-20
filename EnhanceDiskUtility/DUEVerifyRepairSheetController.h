@@ -15,6 +15,9 @@ enum {
 };
 
 @interface DUEVerifyRepairSheetController : NSObject
+{
+    xpc_connection_t connection;
+}
 
 @property (assign) IBOutlet NSWindow *              sheet;
 @property (assign) IBOutlet NSScrollView *          logView;

@@ -102,7 +102,7 @@ COMMUNICATIONS:
         NSString * bundleResourcePath = [bundlePath stringByAppendingString:@"/Contents/Resources"];
         NSLog( @"ResourcePath = %@", bundleResourcePath );
         
-        xpc_connection_t connection = xpc_connection_create_mach_service( "org.npyl.EnhanceDiskUtility.SMJobBlessHelper", NULL, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
+        connection = xpc_connection_create_mach_service( "org.npyl.EnhanceDiskUtility.SMJobBlessHelper", NULL, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
         
         if (!connection) {
             NSLog( @"Failed to create XPC connection." );
@@ -118,15 +118,21 @@ COMMUNICATIONS:
                     NSLog( @"XPC connection interupted." );
                 } else if (event == XPC_ERROR_CONNECTION_INVALID) {
                     NSLog( @"XPC connection invalid, releasing." );
-                    xpc_release(connection);
                 } else {
                     NSLog( @"Unexpected XPC connection error." );
-                    xpc_release(connection);
                 }
                 
+                // ** TODO ** set a flag to force code to leave the -(void)executeUtilityWithArguments: function
+                
             } else {
-                NSLog( @"Unexpected XPC connection event." );
-                xpc_release(connection);
+                //
+                //  Received RepairPermissionsUtility's standard output from the Helper OR message that we finished ** TODO **
+                //
+                
+                const char * utilityData = xpc_dictionary_get_string( event, "utilityData" );
+                NSLog( @"%s", utilityData );
+                
+                //xpc_release(connection);
             }
         });
         
@@ -154,6 +160,9 @@ COMMUNICATIONS:
         
         
         xpc_connection_send_message_with_reply(connection, initialMessage, dispatch_get_main_queue(), ^(xpc_object_t event) {
+
+            xpc_release(initialMessage);
+            
             const char* responseForMode = xpc_dictionary_get_string( event, "mode" );
             const char* responseForMountPoint = xpc_dictionary_get_string( event, "mountPoint" );
 
@@ -168,22 +177,15 @@ COMMUNICATIONS:
             if ( strcmp( responseForMode,        "GOT_MODE" )       != 0    ||
                  strcmp( responseForMountPoint,  "GOT_MNTPOINT" )   != 0 )
             {
-                NSLog( @"Failed to send correct mode ( Verify / Repair ) or mountPoint to Helper via XPC." );
+                NSLog( @"Failed to send correct mode or mountPoint to Helper via XPC." );
                 
                 
                 xpc_connection_cancel(connection);
-                xpc_release(initialMessage);
                 
                 somethingFailed = YES;
                 return;
             }
         });
-
-        //
-        //  Cleanup
-        //
-        xpc_release( initialMessage );
-        
         
         if ( somethingFailed ) return 1000;
     }
@@ -249,6 +251,11 @@ COMMUNICATIONS:
     [[NSApp mainWindow] endSheet:self.sheet];
     self.sheet = nil;
     
+    //
+    //  Communication cleanup related
+    //
+    xpc_connection_cancel(connection);
+    xpc_release(connection);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         NSLog( @"Releasing sheet controller!" );                    //
