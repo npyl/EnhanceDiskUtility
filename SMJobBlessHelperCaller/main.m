@@ -17,7 +17,7 @@
  *      which means that the mainBundle is DiskUtility, not EnhanceDiskUtility.bundle!
  *
  *  Thus I can't run the helper because it doenst exist inside DiskUtility.app... Though, I can run a caller app
- *      which by its turn will call the Helper!
+ *      which on its turn will call the Helper!
  *
  *  Also, this .app can be formless for less overhead! So we dont use the NSApplicationMain();
  *  For the same reason I have removed the storyboard file!!
