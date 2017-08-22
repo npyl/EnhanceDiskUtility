@@ -12,7 +12,7 @@
 @import AppKit;
 
 @interface _due_SUWorkspaceViewController : NSViewController @end
-@interface DUEnhance : NSObject         // ** TODO ** Change that with NSObject <NSToolbarDelegate> ????
+@interface DUEnhance : NSObject <NSToolbarDelegate>                 // ** TODO ** Change that with NSObject <NSToolbarDelegate> ???? -- Need to investigate this a bit
 
 - (void)VerifyPermissions:(id)sender;
 - (void)RepairPermissions:(id)sender;

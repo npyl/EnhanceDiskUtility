@@ -8,7 +8,6 @@
 
 #import "DUEVerifyRepairSheetController.h"
 
-
 @implementation DUEVerifyRepairSheetController
 
 enum {
@@ -20,21 +19,22 @@ enum {
 };
 
 @synthesize sheet = _sheet;
-@synthesize logView = _logView;
+@synthesize logTextField = _logTextField;
 @synthesize doneButton = _doneButton;
 @synthesize progressIndicator = _progressIndicator;
 
+/*
 - (instancetype)init
 {
     self = [super init];
     if (self) {
     }
     return self;
-}
+} */
 
 - (unsigned)executeUtilityWithArguments:(NSArray*)arguments
 {
-    // ** TODO ** Upon exit of DiskUtil we need to kill repairPermissions if running.
+    // ** TODO ** Upon exit of DiskUtil we need to kill repairPermissions if running.   -- Must be done by the Helper not us
     // ** TODO ** Tell people about the apple SMJobBlessUtil.py file ( they can use??? )
     
     //
@@ -80,9 +80,8 @@ enum {
         return kNO_HELPERCALLER_EXEC;
     
     
-    
-    
-    
+
+
     
     
 COMMUNICATIONS:
@@ -147,14 +146,14 @@ COMMUNICATIONS:
                         return;
                     
                     /* give it to our scrol view */
-                    //NSLog( @"%@", str );
+                    [_logTextField setScrollable:YES];
+                    [_logTextField setEnabled:YES];
+                    [_logTextField setPlaceholderString:str];
                     
                     [str release];
                 } else {
                     char data[7];
                     int j = 0;
-                    
-                    //                NSLog( @"%s", utilityData );
                     
                     for ( int i = 102; i < 109 && utilityData[ i ] != ' '; i++ )
                         data[ j++ ] = utilityData[ i ];

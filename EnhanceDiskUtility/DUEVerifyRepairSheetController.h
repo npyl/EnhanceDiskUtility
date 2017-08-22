@@ -20,7 +20,7 @@ enum {
 }
 
 @property (assign) IBOutlet NSWindow *              sheet;
-@property (assign) IBOutlet NSScrollView *          logView;
+@property (assign) IBOutlet NSTextFieldCell *       logTextField;
 @property (assign) IBOutlet NSButton *              doneButton;
 @property (assign) IBOutlet NSProgressIndicator *   progressIndicator;
 

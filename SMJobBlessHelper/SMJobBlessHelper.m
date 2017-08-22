@@ -18,8 +18,6 @@
 //      see: https://stackoverflow.com/questions/24040765/communicate-with-another-app-using-xpc
 //
 //
-//  ** TODO * Handle the events indicating error --> terminate the helper.
-//
 //  ** TODO ** I think we dont actually get any events because it is blocking till the task quits, fix this
 //
 //
@@ -49,9 +47,11 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             NSLog( @"Got unexpected (and unsupported) XPC ERROR" );
         }
 
-// if (task isrunning) kill
-//        exit(EXIT_FAILURE);   ??
-	} else {
+        if ( task && [task isRunning] )
+            [task terminate];
+
+        exit( EXIT_FAILURE );
+    } else {
         //
         //  Read EnhanceDiskUtility's given |mode| |mountPoint| and |RepairPermissionsUtilityPath|
         //
@@ -97,20 +97,24 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             xpc_dictionary_set_string( utilityData, "utilityData", [stringData UTF8String] );
             xpc_connection_send_message( connection, utilityData );
             
-            NSLog(@"Task output! %@", stringData );
+            NSLog(@"Task output! %@", stringData ); // TODO: Remove the task output part and later remove this NSLog call
+        }];
+        
+        [task setTerminationHandler:^(NSTask *task) {
+            //[task.standardOutput fileHandleForReading].readabilityHandler = nil;  // TODO: fix these according to: https://stackoverflow.com/questions/8945770/getting-data-from-nstask-in-real-time-using-notifications-doesnt-work
+            //[task.standardError fileHandleForReading].readabilityHandler = nil;
+
+            //
+            //  Notify EnhandeDiskUtility RepairPermissionsUtility finished
+            //
+            xpc_dictionary_set_string( utilityData, "utilityData", "FINISHED!" );
+            xpc_connection_send_message( connection, utilityData );
+            
+            xpc_connection_cancel(connection);
+            exit(EXIT_SUCCESS);
         }];
         
         [task launch];
-        [task waitUntilExit];
-
-        //
-        //  Notify EnhandeDiskUtility RepairPermissionsUtility finished
-        //
-        xpc_dictionary_set_string( utilityData, "utilityData", "FINISHED!" );
-        xpc_connection_send_message( connection, utilityData );
-        
-        xpc_connection_cancel(connection);
-        exit(EXIT_SUCCESS);
     }
 }
 
