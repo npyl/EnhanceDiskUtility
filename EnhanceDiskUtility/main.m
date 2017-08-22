@@ -59,6 +59,7 @@
  *      ** TODO ** We need to deallocate the repair / verify toolbar item identifiers some time
  *      ** TODO ** There are actually more objects that need deallocation etc..
  *      ** TODO ** Enable ARC on all subprojects and this.
+ *      TODO: Fix the repair permissions process (not working currently)
  */
 
 #import "main.h"

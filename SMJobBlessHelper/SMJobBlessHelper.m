@@ -24,10 +24,9 @@
 
 
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
-    syslog(LOG_NOTICE, "Received event in helper.");
+    //syslog(LOG_NOTICE, "Received event in helper.");
 
-    // the utility
-    NSTask * task = nil;
+    NSTask * task = nil;        /* the utility */
     
     
 	xpc_type_t type = xpc_get_type(event);
@@ -39,12 +38,12 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
 			// the connection is in an invalid state, and you do not need to
 			// call xpc_connection_cancel(). Just tear down any associated state
 			// here.
-            NSLog(@"CONNECTION_INVALID");
+            syslog(LOG_NOTICE, "CONNECTION_INVALID");
 		} else if (event == XPC_ERROR_TERMINATION_IMMINENT) {
 			// Handle per-connection termination cleanup.
-            NSLog(@"TERMINATION_IMMINENT");
+            syslog(LOG_NOTICE, "CONNECTION_IMMINENT");
         } else {
-            NSLog( @"Got unexpected (and unsupported) XPC ERROR" );
+            syslog(LOG_NOTICE, "Got unexpected (and unsupported) XPC ERROR");
         }
 
         if ( task && [task isRunning] )
@@ -56,7 +55,7 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         //  Read EnhanceDiskUtility's given |mode| |mountPoint| and |RepairPermissionsUtilityPath|
         //
 
-        NSLog( @"got START event" );
+        syslog(LOG_NOTICE, "got START event");  // TODO: later remove this
 
         
         xpc_connection_t connection = xpc_dictionary_get_remote_connection(event);
@@ -75,6 +74,9 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         //  Inform client we got the information needed
         //
         xpc_object_t reply = xpc_dictionary_create_reply(event);
+        
+        if (!reply) return;
+        
         xpc_dictionary_set_string( reply, "mode", "GOT_MODE" );
         xpc_dictionary_set_string( reply, "mountPoint", "GOT_MNTPOINT" );
         xpc_connection_send_message( connection, reply );
@@ -101,7 +103,7 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         }];
         
         [task setTerminationHandler:^(NSTask *task) {
-            //[task.standardOutput fileHandleForReading].readabilityHandler = nil;  // TODO: fix these according to: https://stackoverflow.com/questions/8945770/getting-data-from-nstask-in-real-time-using-notifications-doesnt-work
+            [task.standardOutput fileHandleForReading].readabilityHandler = nil;  // -- THINK ITS FIXED -- TODO: fix these according to: https://stackoverflow.com/questions/8945770/getting-data-from-nstask-in-real-time-using-notifications-doesnt-work
             //[task.standardError fileHandleForReading].readabilityHandler = nil;
 
             //

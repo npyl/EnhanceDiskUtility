@@ -286,9 +286,12 @@ COMMUNICATIONS:
     //
     //  Communication cleanup related
     //
-    xpc_connection_cancel(connection);
-    xpc_release(connection);
-    
+    if (connection) {
+        NSLog( @"releasing connection related..." );
+        xpc_connection_cancel(connection);
+        xpc_release(connection);
+    }
+        
     dispatch_async(dispatch_get_main_queue(), ^{
         NSLog( @"Releasing sheet controller!" );                    //
         [self release];                                             //  I cant think of another way to ensure the sheetController gets released the right time
