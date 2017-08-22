@@ -9,6 +9,11 @@
 //
 
 //
+//  THANK YOU VERY MUCG w0lfschild for helping me make the code better
+//  His github: https://github.com/w0lfschild
+//
+
+//
 //  This project uses the private framework StorageKit.framework ( located in /System/Library/PrivateFrameworks )
 //  I used a utility to dump the class SKDisk and put it in a header file called StorageKit.h because I need it for the Verify / Repair
 //      permissions functions.
