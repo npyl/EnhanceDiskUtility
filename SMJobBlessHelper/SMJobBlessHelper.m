@@ -18,9 +18,6 @@
 //      see: https://stackoverflow.com/questions/24040765/communicate-with-another-app-using-xpc
 //
 //
-//  ** TODO ** I think we dont actually get any events because it is blocking till the task quits, fix this
-//
-//
 
 
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
@@ -103,7 +100,8 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         }];
         
         [task setTerminationHandler:^(NSTask *task) {
-            [task.standardOutput fileHandleForReading].readabilityHandler = nil;  // -- THINK ITS FIXED -- TODO: fix these according to: https://stackoverflow.com/questions/8945770/getting-data-from-nstask-in-real-time-using-notifications-doesnt-work
+            // -- THINK ITS FIXED -- TODO: fix these according to: https://stackoverflow.com/questions/8945770/getting-data-from-nstask-in-real-time-using-notifications-doesnt-work
+            [task.standardOutput fileHandleForReading].readabilityHandler = nil;
             //[task.standardError fileHandleForReading].readabilityHandler = nil;
 
             //

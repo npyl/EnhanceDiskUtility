@@ -6,37 +6,24 @@
 //  Copyright © 2017 ulcheats. All rights reserved.
 //
 
+// ** TODO ** Upon exit of DiskUtil we need to kill repairPermissions if running.   -- Must be done by the Helper not us
+// ** TODO ** Tell people about the apple SMJobBlessUtil.py file ( they can use??? )
+
+
 #import "DUEVerifyRepairSheetController.h"
+
 
 @implementation DUEVerifyRepairSheetController
 
-enum {
-    kSUCCESS = 0,                   //  ** TODO ** PUT THESE IN COMMON.H as common DUEErrors
-    
-    kNO_BNDLPATH,
-    kNO_HELPERCALLER_EXEC,
-    kNO_HELPER_XPC_CONNECT,
-};
 
 @synthesize sheet = _sheet;
 @synthesize logTextField = _logTextField;
 @synthesize doneButton = _doneButton;
 @synthesize progressIndicator = _progressIndicator;
 
-/*
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-    }
-    return self;
-} */
 
-- (unsigned)executeUtilityWithArguments:(NSArray*)arguments
+- (void)executeUtilityWithArguments:(NSArray*)arguments
 {
-    // ** TODO ** Upon exit of DiskUtil we need to kill repairPermissions if running.   -- Must be done by the Helper not us
-    // ** TODO ** Tell people about the apple SMJobBlessUtil.py file ( they can use??? )
-    
     //
     //  Find Bundle Folder
     //
@@ -48,7 +35,7 @@ enum {
     if( !bundlePath )
     {
         NSLog( @"failed to get bundle path!" );
-        return kNO_BNDLPATH;
+        return;
     }
     
     
@@ -77,7 +64,7 @@ enum {
     [task waitUntilExit];
     
     if( [task terminationStatus] != 0 )
-        return kNO_HELPERCALLER_EXEC;
+        return;
     
     
 
@@ -105,7 +92,7 @@ COMMUNICATIONS:
         
         if (!connection) {
             NSLog( @"Failed to create XPC connection." );
-            return kNO_HELPER_XPC_CONNECT;
+            return;
         }
         
         xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
@@ -121,6 +108,7 @@ COMMUNICATIONS:
                     NSLog( @"Unexpected XPC connection error." );
                 }
                 
+                // TODO: make this explanation better
                 // -- ITS OK, we exit if we find a null string or something anyway so... ** TODO ** set a flag to force code to leave the -(void)executeUtilityWithArguments: function
                 // -- We dont have to add code for this here.
             } else {
@@ -161,7 +149,7 @@ COMMUNICATIONS:
                     NSLog( @"percentage: %s", data );
                     
                     /*
-                     *  RepairPermissionsOutput Style:
+                     *  RepairPermissionsUtility Output Style:
                      *
                      *  Task output! \^[[1;39mStatus:	 \^[[0;39m\^[[1;39m[ULTRAFAST]\^[[0;39m Doing some wolf's magics...	\^[[1;39mProgress: \^[[0;39m41.29% [|]
                      */
@@ -220,10 +208,11 @@ COMMUNICATIONS:
             }
         });
         
-        if ( somethingFailed ) return 1000;
-    }
+        if ( somethingFailed )
+            NSLog( @"Something went wrong during communication with Helper" );
     
-    return kSUCCESS;
+        
+    }   // COMMUNICATIONS
 }
 
 /*
@@ -270,7 +259,7 @@ COMMUNICATIONS:
     //  Start the process
     //
     
-    NSLog( @"Ended with status: %i", [self executeUtilityWithArguments:arguments] );        //
+    [self executeUtilityWithArguments:arguments];                                           //
                                                                                             //  this sends data to the sheetScrollView from the RepairPermissionsUtility
                                                                                             //  once for any reason this ends the sheet waits there to be closed with a button
                                                                                             //
