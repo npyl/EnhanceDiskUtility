@@ -122,17 +122,51 @@ COMMUNICATIONS:
                     NSLog( @"Unexpected XPC connection error." );
                 }
                 
-                // ** TODO ** set a flag to force code to leave the -(void)executeUtilityWithArguments: function
-                
+                // -- ITS OK, we exit if we find a null string or something anyway so... ** TODO ** set a flag to force code to leave the -(void)executeUtilityWithArguments: function
+                // -- We dont have to add code for this here.
             } else {
                 //
-                //  Received RepairPermissionsUtility's standard output from the Helper OR message that we finished ** TODO **
+                //
                 //
                 
                 const char * utilityData = xpc_dictionary_get_string( event, "utilityData" );
-                NSLog( @"%s", utilityData );
                 
-                //xpc_release(connection);
+                if (!utilityData)
+                    return;
+                
+                if ( strcmp( utilityData, "FINISHED!" ) == 0 )
+                {
+                    //
+                    // Cool. Open RepairPermissionsUtility's log stored in /tmp
+                    //
+                    
+                    NSError * err = nil;
+                    NSString * str = [[NSString alloc] initWithContentsOfFile:@"/tmp/RepairPermissionsUtility.log" encoding:NSUTF8StringEncoding error:&err];
+                    
+                    if (!str)
+                        return;
+                    
+                    /* give it to our scrol view */
+                    //NSLog( @"%@", str );
+                    
+                    [str release];
+                } else {
+                    char data[7];
+                    int j = 0;
+                    
+                    //                NSLog( @"%s", utilityData );
+                    
+                    for ( int i = 102; i < 109 && utilityData[ i ] != ' '; i++ )
+                        data[ j++ ] = utilityData[ i ];
+                    
+                    NSLog( @"percentage: %s", data );
+                    
+                    /*
+                     *  RepairPermissionsOutput Style:
+                     *
+                     *  Task output! \^[[1;39mStatus:	 \^[[0;39m\^[[1;39m[ULTRAFAST]\^[[0;39m Doing some wolf's magics...	\^[[1;39mProgress: \^[[0;39m41.29% [|]
+                     */
+                }
             }
         });
         
@@ -156,7 +190,7 @@ COMMUNICATIONS:
         //
         xpc_dictionary_set_string(initialMessage, "mode", mode);
         xpc_dictionary_set_string(initialMessage, "mountPoint", mountPoint);
-        xpc_dictionary_set_string(initialMessage, "repairPermissionsUtilityPath", repairPermissionsUtilityPath);
+        xpc_dictionary_set_string(initialMessage, "RepairPermissionsUtilityPath", repairPermissionsUtilityPath);
         
         
         xpc_connection_send_message_with_reply(connection, initialMessage, dispatch_get_main_queue(), ^(xpc_object_t event) {
@@ -207,21 +241,20 @@ COMMUNICATIONS:
     NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";        // ** TODO ** This should reside in common.h
     NSArray * arguments = nil;
     
-    NSLog( @"%i,%i", kVerifySheetIdentifier, kRepairSheetIdentifier );
     
     switch ( sheetIdentifier ) {
-        case kVerifySheetIdentifier:    // run Verification
+        case kVerifySheetIdentifier:
             
-            arguments = [[NSArray alloc] initWithObjects:@"--verify", mountPoint, nil];     // ** TODO ** Should be --no-output ??
+            arguments = [[NSArray alloc] initWithObjects:@"--verify", mountPoint, nil];
             
             break;
-        case kRepairSheetIdentifier:    // run Repair
+        case kRepairSheetIdentifier:
             
-            arguments = [[NSArray alloc] initWithObjects:@"--repair", mountPoint, nil];     // ** TODO ** Should be --no-output ??
+            arguments = [[NSArray alloc] initWithObjects:@"--repair", mountPoint, nil];
 
             break;
         default:
-            NSLog( @"Unexpected sheetIdentifier passed! Aborting!" );                       //  ** TODO ** Handle error with some way. ---> This is nice I think.
+            NSLog( @"Unexpected sheetIdentifier passed! Aborting!" );
             return;
             
             break;

@@ -6,10 +6,6 @@
 //  Copyright © 2017 ulcheats. All rights reserved.
 //
 
-/*
- *  ARC is ** ENABLED **!
- */
-
 #include <syslog.h>
 #include <xpc/xpc.h>
 
@@ -24,18 +20,16 @@
 //
 //  ** TODO * Handle the events indicating error --> terminate the helper.
 //
+//  ** TODO ** I think we dont actually get any events because it is blocking till the task quits, fix this
+//
+//
 
 
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
-    //
-    //  This code waits for the following events: error-related events OR information from client(=EnhanceDiskUtility) for starting the repair job
-    //
-
     syslog(LOG_NOTICE, "Received event in helper.");
 
     // the utility
     NSTask * task = nil;
-    
     
     
 	xpc_type_t type = xpc_get_type(event);
@@ -54,11 +48,12 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         } else {
             NSLog( @"Got unexpected (and unsupported) XPC ERROR" );
         }
-        
-        
+
+// if (task isrunning) kill
+//        exit(EXIT_FAILURE);   ??
 	} else {
         //
-        //  Read EnhanceDiskUtility's given |mode| and |mountPoint|
+        //  Read EnhanceDiskUtility's given |mode| |mountPoint| and |RepairPermissionsUtilityPath|
         //
 
         NSLog( @"got START event" );
@@ -68,18 +63,13 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         
         const char * mode = xpc_dictionary_get_string( event, "mode" );
         const char * mountPoint = xpc_dictionary_get_string( event, "mountPoint" );
-        const char * repairPermissionsUtilityPath = xpc_dictionary_get_string( event, "repairPermissionsUtilityPath" );
+        const char * repairPermissionsUtilityPath = xpc_dictionary_get_string( event, "RepairPermissionsUtilityPath" );
         
         if (!mode || !mountPoint || !repairPermissionsUtilityPath )
             return;
         
-        if ( strcmp( mode, "--verify" ) != 0 && strcmp( mode, "--repair" ) != 0 )
-        {
-            NSLog( @"Received bad mode information!" );
-            return;
-        }
         
-        NSLog( @"mode = %s\nmntPoint = %s\nrepairPermissionsUtilityPath = %s", mode, mountPoint, repairPermissionsUtilityPath );
+        NSLog( @"mode = %s\nmntPoint = %s\nRepairPermissionsUtilityPath = %s", mode, mountPoint, repairPermissionsUtilityPath );
         
         //
         //  Inform client we got the information needed
@@ -97,26 +87,28 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         
         task = [[NSTask alloc] init];
         [task setLaunchPath:[NSString stringWithUTF8String:repairPermissionsUtilityPath]];
-        [task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint] ]];
+        [task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint], @"--output", @"/tmp/RepairPermissionsUtility.log" ]];
         
         task.standardOutput = [NSPipe pipe];
         [[task.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle *file) {
-            NSData *data = [file availableData]; // this will read to EOF, so call only once
+            NSData *data = [file availableData];                                                                // this will read to EOF, so call only once
             NSString * stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             
             xpc_dictionary_set_string( utilityData, "utilityData", [stringData UTF8String] );
-            //xpc_dictionary_set_string( reply, "finished", "YES" );
             xpc_connection_send_message( connection, utilityData );
-
             
             NSLog(@"Task output! %@", stringData );
         }];
         
-        // ** TODO ** Set a selector for calling when the task exits which will exit() this helper
-        
         [task launch];
         [task waitUntilExit];
 
+        //
+        //  Notify EnhandeDiskUtility RepairPermissionsUtility finished
+        //
+        xpc_dictionary_set_string( utilityData, "utilityData", "FINISHED!" );
+        xpc_connection_send_message( connection, utilityData );
+        
         xpc_connection_cancel(connection);
         exit(EXIT_SUCCESS);
     }

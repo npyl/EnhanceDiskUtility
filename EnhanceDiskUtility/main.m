@@ -143,8 +143,8 @@ void DUELog( NSString * str )
     DUELog( @"Told to verify permissions" );
     
     NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
-  
-    DUEVerifyRepairSheetController * verifySheet = [[DUEVerifyRepairSheetController alloc] init];
+    
+    DUEVerifyRepairSheetController * verifySheet = [[DUEVerifyRepairSheetController alloc] init];       // autoreleased internally
     [verifySheet showSheet:kVerifySheetIdentifier forMountPoint:mountPoint];
 }
 
@@ -179,7 +179,7 @@ void DUELog( NSString * str )
     
     NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
     
-    DUEVerifyRepairSheetController * repairSheet = [[DUEVerifyRepairSheetController alloc] init];
+    DUEVerifyRepairSheetController * repairSheet = [[DUEVerifyRepairSheetController alloc] init];       // autoreleased internally
     [repairSheet showSheet:kRepairSheetIdentifier forMountPoint:mountPoint];
 }
 
@@ -311,6 +311,9 @@ void DUELog( NSString * str )
     //
     // Only show buttons as enabled if a device with a mount point is selected
     //
+    
+    // TODO: also get the filesystem type and check if it is HFS/HFS+/...
+    
     
     if (globalSelectedDiskHandle) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
