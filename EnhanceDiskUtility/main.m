@@ -9,7 +9,7 @@
 //
 
 //
-//  THANK YOU VERY MUCG w0lfschild for helping me make the code better
+//  THANK YOU VERY MUCH w0lfschild for helping me make the code better
 //  His github: https://github.com/w0lfschild
 //
 
