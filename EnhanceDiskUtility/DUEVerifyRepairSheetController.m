@@ -82,7 +82,8 @@ COMMUNICATIONS:
         //  Find Resources folder
         //
         
-        __block BOOL somethingFailed = NO;
+        __block BOOL somethingFailed = NO;                  // must not be YES
+        __block BOOL finishedSuccessfully = NO;             // must become YES when verify/repair finished
         
         
         NSString * bundleResourcePath = [bundlePath stringByAppendingString:@"/Contents/Resources"];
@@ -107,45 +108,86 @@ COMMUNICATIONS:
                 } else {
                     NSLog( @"Unexpected XPC connection error." );
                 }
+
                 
-                // TODO: make this explanation better
-                // -- ITS OK, we exit if we find a null string or something anyway so... ** TODO ** set a flag to force code to leave the -(void)executeUtilityWithArguments: function
-                // -- We dont have to add code for this here.
                 
-                // TODO: Print a message to textBox that something failed!
+                /*  if somethingFailed during STAGE1 or didn't finish successfully ( thus failed during STAGE2 ) */
+                
+                if ( somethingFailed || !finishedSuccessfully )
+                {
+                    NSLog( @"%@", somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication" );
+                    [_logTextField setPlaceholderString:somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication"];
+                }
+                    
                 
                 [_progressIndicator stopAnimation:nil];
-            } else {
+                
+                
                 //
+                //  In case of any XPC error we dont have to cancel the connection here. ( neither anywhere else )
                 //
+                //  Upon invalidation / interruption during XPC communication all the following xpc-related calls will fail
+                //  Thus the executeUtilityWithArguments() will return.
                 //
+                //  All XPC errors are handled appropriately by the SMJobBlessHelper
+                //
+            } else {    //======================    STAGE 2    ======================//
+                
                 
                 const char * utilityData = xpc_dictionary_get_string( event, "utilityData" );
                 
                 if (!utilityData)
                     return;
                 
-                if ( strcmp( utilityData, "FINISHED!" ) == 0 )
+                //
+                //  Check if we got FINISH event
+                //  |_  YES =>  Check if we got exit status=0
+                //  |               |_  YES => Show log
+                //  |               |_  NO  => Show error
+                //  |_  NO  =>  It is data from the Utility =>  Print to textbox
+                //
+                
+                NSLog( @"utilityData = %s", utilityData );
+                
+#define FINISH_EVENT "FINISHED!"
+#define FINISH_EVENT_LEN 9
+#define FINISH_EVENT_LABEL (FINISH_EVENT_LEN + 1)   // FINISHED!X   (where X=1-digit int)
+                
+                if ( strncmp( utilityData, "FINISHED!", sizeof(char)*FINISH_EVENT_LABEL ) == 0 )
                 {
-                    //
-                    // Cool. Open RepairPermissionsUtility's log stored in /tmp
-                    //
-                    
-                    NSError * err = nil;
-                    NSString * str = [[NSString alloc] initWithContentsOfFile:@"/tmp/RepairPermissionsUtility.log" encoding:NSUTF8StringEncoding error:&err];
-                    
-                    if (!str)
-                        return;
-                    
-                    /* give it to our scrol view */
-                    [_logTextField setScrollable:YES];
-                    [_logTextField setEnabled:YES];
-                    [_logTextField setPlaceholderString:str];
-                    
-                    [str release];
+                    if (utilityData[FINISH_EVENT_LEN-1] == '0')     // RepairPermissionsUtility exited with status 0 => SUCCESS
+                    {
+                        //
+                        // Cool. Open RepairPermissionsUtility's log stored in /tmp
+                        //
+                        
+                        NSError * err = nil;
+                        NSString * str = [[NSString alloc] initWithContentsOfFile:@"/tmp/RepairPermissionsUtility.log" encoding:NSUTF8StringEncoding error:&err];
+                        
+                        if (!str)
+                            return;
+                        
+                        /* give it to our scrol view */
+                        [_logTextField setScrollable:YES];
+                        [_logTextField setEnabled:YES];
+                        [_logTextField setPlaceholderString:str];
+                        
+                        finishedSuccessfully = YES;     /* tell the event handler that the XPC_ERROR_CONNECTION_INVALID that will follow is a sign all operations succeded, not an error */
+                        
+                        [str release];
+                    }
+                    else {
+                        NSLog( @"Error! RepairPermissionsUtility exited with status:%c", utilityData[FINISH_EVENT_LEN-1] );
+                        [_logTextField setPlaceholderString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
+                    }
                     
                     [_progressIndicator stopAnimation:nil];
                 } else {
+                    // TODO: must finish this...
+                    
+                    NSLog( @"%s", utilityData );    // dbg
+                    
+                    /*
                     char data[7];
                     int j = 0;
                     
@@ -154,10 +196,11 @@ COMMUNICATIONS:
                     
                     NSLog( @"percentage: %s", data );
                     
-                    /*
-                     *  RepairPermissionsUtility Output Style:
-                     *
-                     *  Task output! \^[[1;39mStatus:	 \^[[0;39m\^[[1;39m[ULTRAFAST]\^[[0;39m Doing some wolf's magics...	\^[[1;39mProgress: \^[[0;39m41.29% [|]
+                    //
+                    //  RepairPermissionsUtility Output Style:
+                    //
+                    //  Task output! \^[[1;39mStatus:	 \^[[0;39m\^[[1;39m[ULTRAFAST]\^[[0;39m Doing some wolf's magics...	\^[[1;39mProgress: \^[[0;39m41.29% [|]
+                    //
                      */
                 }
             }
@@ -166,11 +209,13 @@ COMMUNICATIONS:
         xpc_connection_resume(connection);
         
         
+        //======================    STAGE 1    ======================//
+        
+        
         //
         //  Tell helper to run utility
         //
-        
-        
+
         xpc_object_t initialMessage = xpc_dictionary_create(NULL, NULL, 0);
         
         const char* mode = [[arguments objectAtIndex:0] UTF8String];
@@ -206,19 +251,13 @@ COMMUNICATIONS:
             {
                 NSLog( @"Failed to send correct mode or mountPoint to Helper via XPC." );
                 
-                
-                xpc_connection_cancel(connection);
-                
                 somethingFailed = YES;
+                xpc_connection_cancel(connection);
                 return;
             }
         });
         
-        if ( somethingFailed )
-            NSLog( @"Something went wrong during communication with Helper" );
-    
-        
-    }   // COMMUNICATIONS
+    }
 }
 
 /*

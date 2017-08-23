@@ -86,7 +86,8 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         
         task = [[NSTask alloc] init];
         [task setLaunchPath:[NSString stringWithUTF8String:repairPermissionsUtilityPath]];
-        [task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint], @"--output", @"/tmp/RepairPermissionsUtility.log" ]];
+        [task setArguments:@[ @"--output", @"/tmp/RepairPermissionsUtility.log", [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint]  ]];
+        //[task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint], @"--output", @"/tmp/RepairPermissionsUtility.log" ]];
         
         task.standardOutput = [NSPipe pipe];
         [[task.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle *file) {
@@ -95,8 +96,6 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             
             xpc_dictionary_set_string( utilityData, "utilityData", [stringData UTF8String] );
             xpc_connection_send_message( connection, utilityData );
-            
-            NSLog(@"Task output! %@", stringData ); // TODO: Remove the task output part and later remove this NSLog call
         }];
         
         [task setTerminationHandler:^(NSTask *task) {
@@ -107,7 +106,16 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             //
             //  Notify EnhandeDiskUtility RepairPermissionsUtility finished
             //
-            xpc_dictionary_set_string( utilityData, "utilityData", "FINISHED!" );
+            
+#define FINISH_EVENT "FINISHED!"
+#define FINISH_EVENT_LEN 9
+#define FINISH_EVENT_LABEL 10   // FINISHED!X   (where X=1-digit int)
+            
+            char str[FINISH_EVENT_LABEL];
+            
+            sprintf(str, "FINISHED!%i", [task terminationStatus] );
+            
+            xpc_dictionary_set_string( utilityData, "utilityData", str );
             xpc_connection_send_message( connection, utilityData );
             
             xpc_connection_cancel(connection);
