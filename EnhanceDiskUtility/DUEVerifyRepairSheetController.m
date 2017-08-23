@@ -111,6 +111,10 @@ COMMUNICATIONS:
                 // TODO: make this explanation better
                 // -- ITS OK, we exit if we find a null string or something anyway so... ** TODO ** set a flag to force code to leave the -(void)executeUtilityWithArguments: function
                 // -- We dont have to add code for this here.
+                
+                // TODO: Print a message to textBox that something failed!
+                
+                [_progressIndicator stopAnimation:nil];
             } else {
                 //
                 //
@@ -139,6 +143,8 @@ COMMUNICATIONS:
                     [_logTextField setPlaceholderString:str];
                     
                     [str release];
+                    
+                    [_progressIndicator stopAnimation:nil];
                 } else {
                     char data[7];
                     int j = 0;
@@ -263,8 +269,6 @@ COMMUNICATIONS:
                                                                                             //  this sends data to the sheetScrollView from the RepairPermissionsUtility
                                                                                             //  once for any reason this ends the sheet waits there to be closed with a button
                                                                                             //
-    
-    [_progressIndicator stopAnimation:nil];
 }
 
 - (IBAction)closeSheet:(id)sender
