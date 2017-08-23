@@ -18,6 +18,7 @@
 //      see: https://stackoverflow.com/questions/24040765/communicate-with-another-app-using-xpc
 //
 //
+// -- THINK ITS FIXED -- TODO: fix these according to: https://stackoverflow.com/questions/8945770/getting-data-from-nstask-in-real-time-using-notifications-doesnt-work
 
 
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
@@ -87,7 +88,6 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         task = [[NSTask alloc] init];
         [task setLaunchPath:[NSString stringWithUTF8String:repairPermissionsUtilityPath]];
         [task setArguments:@[ @"--output", @"/tmp/RepairPermissionsUtility.log", [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint]  ]];
-        //[task setArguments:@[ [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint], @"--output", @"/tmp/RepairPermissionsUtility.log" ]];
         
         task.standardOutput = [NSPipe pipe];
         [[task.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle *file) {
@@ -99,9 +99,7 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         }];
         
         [task setTerminationHandler:^(NSTask *task) {
-            // -- THINK ITS FIXED -- TODO: fix these according to: https://stackoverflow.com/questions/8945770/getting-data-from-nstask-in-real-time-using-notifications-doesnt-work
             [task.standardOutput fileHandleForReading].readabilityHandler = nil;
-            //[task.standardError fileHandleForReading].readabilityHandler = nil;
 
             //
             //  Notify EnhandeDiskUtility RepairPermissionsUtility finished
@@ -109,11 +107,12 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             
 #define FINISH_EVENT "FINISHED!"
 #define FINISH_EVENT_LEN 9
-#define FINISH_EVENT_LABEL 10   // FINISHED!X   (where X=1-digit int)
+#define FINISH_EVENT_LABEL_LEN (FINISH_EVENT_LEN+1)   // FINISHED!X   (where X=1-digit int)
             
-            char str[FINISH_EVENT_LABEL];
+            char str[FINISH_EVENT_LABEL_LEN] = "FINISH!X";
+            str[FINISH_EVENT_LABEL_LEN-1] = [task terminationStatus] + '0';
             
-            sprintf(str, "FINISHED!%i", [task terminationStatus] );
+            NSLog( @"FML:%s", str );
             
             xpc_dictionary_set_string( utilityData, "utilityData", str );
             xpc_connection_send_message( connection, utilityData );

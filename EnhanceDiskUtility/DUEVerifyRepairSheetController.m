@@ -151,11 +151,11 @@ COMMUNICATIONS:
                 
 #define FINISH_EVENT "FINISHED!"
 #define FINISH_EVENT_LEN 9
-#define FINISH_EVENT_LABEL (FINISH_EVENT_LEN + 1)   // FINISHED!X   (where X=1-digit int)
+#define FINISH_EVENT_LABEL_LEN (FINISH_EVENT_LEN + 1)   // FINISHED!X   (where X=1-digit int)
                 
-                if ( strncmp( utilityData, "FINISHED!", sizeof(char)*FINISH_EVENT_LABEL ) == 0 )
+                if ( strncmp( utilityData, "FINISHED!", FINISH_EVENT_LEN ) == 0 )
                 {
-                    if (utilityData[FINISH_EVENT_LEN-1] == '0')     // RepairPermissionsUtility exited with status 0 => SUCCESS
+                    if (utilityData[FINISH_EVENT_LABEL_LEN-1] == '0')     // RepairPermissionsUtility exited with status 0 => SUCCESS
                     {
                         //
                         // Cool. Open RepairPermissionsUtility's log stored in /tmp
@@ -168,8 +168,8 @@ COMMUNICATIONS:
                             return;
                         
                         /* give it to our scrol view */
-                        [_logTextField setScrollable:YES];
-                        [_logTextField setEnabled:YES];
+//                        [_logTextField setScrollable:YES];
+//                        [_logTextField setEnabled:YES];
                         [_logTextField setPlaceholderString:str];
                         
                         finishedSuccessfully = YES;     /* tell the event handler that the XPC_ERROR_CONNECTION_INVALID that will follow is a sign all operations succeded, not an error */
@@ -177,7 +177,7 @@ COMMUNICATIONS:
                         [str release];
                     }
                     else {
-                        NSLog( @"Error! RepairPermissionsUtility exited with status:%c", utilityData[FINISH_EVENT_LEN-1] );
+                        NSLog( @"Error! RepairPermissionsUtility exited with status:%c", utilityData[FINISH_EVENT_LABEL_LEN-1] );
                         [_logTextField setPlaceholderString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
                     }
                     
