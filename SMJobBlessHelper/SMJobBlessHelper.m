@@ -89,7 +89,13 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         [task setLaunchPath:[NSString stringWithUTF8String:repairPermissionsUtilityPath]];
         [task setArguments:@[ @"--output", @"/tmp/RepairPermissionsUtility.log", [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint]  ]];
         
+        /*
+         //
+         // Disabled the StandardOutput support because passing the --output parameter disables loging percentage, so pipe is pointless
+         //
+         
         task.standardOutput = [NSPipe pipe];
+        
         [[task.standardOutput fileHandleForReading] setReadabilityHandler:^(NSFileHandle *file) {
             NSData *data = [file availableData];                                                                // this will read to EOF, so call only once
             NSString * stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -97,24 +103,18 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             xpc_dictionary_set_string( utilityData, "utilityData", [stringData UTF8String] );
             xpc_connection_send_message( connection, utilityData );
         }];
+         */
         
         [task setTerminationHandler:^(NSTask *task) {
-            [task.standardOutput fileHandleForReading].readabilityHandler = nil;
+            // [task.standardOutput fileHandleForReading].readabilityHandler = nil; // disabled because --output consequences
 
             //
             //  Notify EnhandeDiskUtility RepairPermissionsUtility finished
             //
             
-#define FINISH_EVENT "FINISHED!"
-#define FINISH_EVENT_LEN 9
-#define FINISH_EVENT_LABEL_LEN (FINISH_EVENT_LEN+1)   // FINISHED!X   (where X=1-digit int)
             
-            char str[FINISH_EVENT_LABEL_LEN] = "FINISH!X";
-            str[FINISH_EVENT_LABEL_LEN-1] = [task terminationStatus] + '0';
-            
-            NSLog( @"FML:%s", str );
-            
-            xpc_dictionary_set_string( utilityData, "utilityData", str );
+            xpc_dictionary_set_string( utilityData, "utilityData", "FINISHED!" );
+            xpc_dictionary_set_int64( utilityData, "terminationStatus", [task terminationStatus] );
             xpc_connection_send_message( connection, utilityData );
             
             xpc_connection_cancel(connection);

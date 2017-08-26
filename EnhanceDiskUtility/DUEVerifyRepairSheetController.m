@@ -135,28 +135,28 @@ COMMUNICATIONS:
                 
                 
                 const char * utilityData = xpc_dictionary_get_string( event, "utilityData" );
+                int64_t terminationStatus = xpc_dictionary_get_int64( event, "terminationStatus" );
                 
                 if (!utilityData)
+                {
+                    NSLog( @"Error: utilityData = null" );
                     return;
-                
+                }
+                    
                 //
-                //  Check if we got FINISH event
+                //  Got non-error-event from Helper! Check whether FINISH! or data
                 //  |_  YES =>  Check if we got exit status=0
                 //  |               |_  YES => Show log
                 //  |               |_  NO  => Show error
                 //  |_  NO  =>  It is data from the Utility =>  Print to textbox
                 //
                 
-                NSLog( @"utilityData = %s", utilityData );
-                
-#define FINISH_EVENT "FINISHED!"
-#define FINISH_EVENT_LEN 9
-#define FINISH_EVENT_LABEL_LEN (FINISH_EVENT_LEN + 1)   // FINISHED!X   (where X=1-digit int)
-                
-                if ( strncmp( utilityData, "FINISHED!", FINISH_EVENT_LEN ) == 0 )
+                if ( strcmp( utilityData, "FINISHED!" ) == 0 )
                 {
-                    if (utilityData[FINISH_EVENT_LABEL_LEN-1] == '0')     // RepairPermissionsUtility exited with status 0 => SUCCESS
+                    if (terminationStatus == 0) // RepairPermissionsUtility exited with status 0 => SUCCESS
                     {
+                        NSLog( @"Got RepairPermissionsUtility exit status= %lld", terminationStatus );
+                        
                         //
                         // Cool. Open RepairPermissionsUtility's log stored in /tmp
                         //
@@ -168,8 +168,6 @@ COMMUNICATIONS:
                             return;
                         
                         /* give it to our scrol view */
-//                        [_logTextField setScrollable:YES];
-//                        [_logTextField setEnabled:YES];
                         [_logTextField setPlaceholderString:str];
                         
                         finishedSuccessfully = YES;     /* tell the event handler that the XPC_ERROR_CONNECTION_INVALID that will follow is a sign all operations succeded, not an error */
@@ -177,31 +175,23 @@ COMMUNICATIONS:
                         [str release];
                     }
                     else {
-                        NSLog( @"Error! RepairPermissionsUtility exited with status:%c", utilityData[FINISH_EVENT_LABEL_LEN-1] );
+                        NSLog( @"Error! RepairPermissionsUtility exited with status:%lld", terminationStatus );
                         [_logTextField setPlaceholderString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
                     }
                     
                     [_progressIndicator stopAnimation:nil];
-                } else {
+                }
+                
+                else {
                     // TODO: must finish this...
-                    
-                    NSLog( @"%s", utilityData );    // dbg
-                    
-                    /*
-                    char data[7];
-                    int j = 0;
-                    
-                    for ( int i = 102; i < 109 && utilityData[ i ] != ' '; i++ )
-                        data[ j++ ] = utilityData[ i ];
-                    
-                    NSLog( @"percentage: %s", data );
-                    
                     //
-                    //  RepairPermissionsUtility Output Style:
+                    //  Problem is when passing the parameter --output /tmp/RepairPermissions.log to RepairPermissionsUtility it does not give output ( or the output is not detectable? )
+                    //  I will see if I can find a solution to this so that we print the percentage at least :)
                     //
-                    //  Task output! \^[[1;39mStatus:	 \^[[0;39m\^[[1;39m[ULTRAFAST]\^[[0;39m Doing some wolf's magics...	\^[[1;39mProgress: \^[[0;39m41.29% [|]
+                    //  For this reason I disabled the pipe functionality in Helper ( This means less overhead for EnhanceDiskUtility which is a positive aspect )
                     //
-                     */
+                    
+                    //NSLog( @"%s", utilityData );    // dbg
                 }
             }
         });
