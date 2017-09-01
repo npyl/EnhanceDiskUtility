@@ -17,7 +17,7 @@
 
 
 @synthesize sheet = _sheet;
-@synthesize logTextField = _logTextField;
+@synthesize logView = _logView;
 @synthesize doneButton = _doneButton;
 @synthesize progressIndicator = _progressIndicator;
 
@@ -71,7 +71,7 @@
 
     
     
-COMMUNICATIONS:
+COMMUNICATIONS:;
     {
         
         //
@@ -116,7 +116,8 @@ COMMUNICATIONS:
                 if ( somethingFailed || !finishedSuccessfully )
                 {
                     NSLog( @"%@", somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication" );
-                    [_logTextField setPlaceholderString:somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication"];
+                    _logView.string = [_logView.string stringByAppendingString:somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication"];
+                    //[_logView setString:somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication"];
                 }
                     
                 
@@ -167,16 +168,22 @@ COMMUNICATIONS:
                         if (!str)
                             return;
                         
+                        NSLog(@"%@",str);
+                        
                         /* give it to our scrol view */
-                        [_logTextField setPlaceholderString:str];
+                        _logView.string = [_logView.string stringByAppendingString:str];
+//                        [_logTextField setPlaceholderString:str];
                         
                         finishedSuccessfully = YES;     /* tell the event handler that the XPC_ERROR_CONNECTION_INVALID that will follow is a sign all operations succeded, not an error */
                         
                         [str release];
+                        
+                        
                     }
                     else {
                         NSLog( @"Error! RepairPermissionsUtility exited with status:%lld", terminationStatus );
-                        [_logTextField setPlaceholderString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
+                        _logView.string = [_logView.string stringByAppendingString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
+                        //[_logLabel setPlaceholderString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
                     }
                     
                     [_progressIndicator stopAnimation:nil];
@@ -293,6 +300,9 @@ COMMUNICATIONS:
     //
     //  Start the process
     //
+    
+    _logView.string = [_logView.string stringByAppendingString:@"starting"];
+    //[_logLabel setPlaceholderString:@"starting"];
     
     [self executeUtilityWithArguments:arguments];                                           //
                                                                                             //  this sends data to the sheetScrollView from the RepairPermissionsUtility

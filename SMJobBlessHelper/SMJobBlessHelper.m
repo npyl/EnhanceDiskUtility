@@ -44,7 +44,7 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             syslog(LOG_NOTICE, "Got unexpected (and unsupported) XPC ERROR");
         }
 
-        if ( task && [task isRunning] )
+        if ( task && [task isRunning] )     // TODO: this doesnt work???
             [task terminate];
 
         exit( EXIT_FAILURE );
@@ -106,7 +106,7 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
          */
         
         [task setTerminationHandler:^(NSTask *task) {
-            // [task.standardOutput fileHandleForReading].readabilityHandler = nil; // disabled because --output consequences
+            // [task.standardOutput fileHandleForReading].readabilityHandler = nil; // disabled because of --output consequences
 
             //
             //  Notify EnhandeDiskUtility RepairPermissionsUtility finished
