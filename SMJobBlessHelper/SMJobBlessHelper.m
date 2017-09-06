@@ -11,19 +11,27 @@
 
 #import <Foundation/Foundation.h>
 
+#define DEBUG_MODE
 
+#ifdef DEBUG_MODE
+#define DBG_LOG(str) syslog(LOG_NOTICE, str)
+#else
+#define DBG_LOG(str)
+#endif
 
 //
 //  -- THESE ARE NOT NEEDED -- ** TODO ** Add function for cleaning up files in /Library/LaunchDaemons, PrivilegedHelpers,
 //      see: https://stackoverflow.com/questions/24040765/communicate-with-another-app-using-xpc
 //
+
+// ** TODO ** Upon exit of DiskUtil we need to kill repairPermissions if running
+
 //
 // -- THINK ITS FIXED -- TODO: fix these according to: https://stackoverflow.com/questions/8945770/getting-data-from-nstask-in-real-time-using-notifications-doesnt-work
 
 
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
-    //syslog(LOG_NOTICE, "Received event in helper.");
-
+    
     NSTask * task = nil;        /* the utility */
     
     
@@ -53,8 +61,7 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         //  Read EnhanceDiskUtility's given |mode| |mountPoint| and |RepairPermissionsUtilityPath|
         //
 
-        syslog(LOG_NOTICE, "got START event");  // TODO: later remove this
-
+        DBG_LOG("got START event");
         
         xpc_connection_t connection = xpc_dictionary_get_remote_connection(event);
         
@@ -90,9 +97,10 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         [task setArguments:@[ @"--output", @"/tmp/RepairPermissionsUtility.log", [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint]  ]];
         
         /*
-         //
-         // Disabled the StandardOutput support because passing the --output parameter disables loging percentage, so pipe is pointless
-         //
+         *
+         *  Disabled the StandardOutput support because passing the --output parameter disables loging percentage, so pipe is pointless
+         *
+         *
          
         task.standardOutput = [NSPipe pipe];
         
@@ -106,7 +114,8 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
          */
         
         [task setTerminationHandler:^(NSTask *task) {
-            // [task.standardOutput fileHandleForReading].readabilityHandler = nil; // disabled because of --output consequences
+            //  NOTE: enable when using pipe
+            // [task.standardOutput fileHandleForReading].readabilityHandler = nil;
 
             //
             //  Notify EnhandeDiskUtility RepairPermissionsUtility finished

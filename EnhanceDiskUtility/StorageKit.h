@@ -8,10 +8,18 @@
 //  Copyright © 2017 ulcheats. All rights reserved.
 //
 
-@import Foundation;
-
 #ifndef StorageKit_h
 #define StorageKit_h
+
+@import Foundation;
+
+NSString    *kSKDiskFileSystemUndefined = @"kSKDiskFileSystemUndefined",
+            *kSKDiskFileSystemOSX       = @"kSKDiskFileSystemOSX",
+            *kSKDiskFileSystemFAT       = @"kSKDiskFileSystemFAT",
+            *kSKDiskFileSystemExFAT     = @"kSKDiskFileSystemExFAT",
+            *kSKDiskFileSystemNTFS      = @"kSKDiskFileSystemNTFS",
+            *kSKDiskFileSystemACFS      = @"kSKDiskFileSystemACFS",
+            *kSKDiskFileSystemAPFS      = @"kSKDiskFileSystemAPFS";
 
 @interface SKDisk : NSObject
 {

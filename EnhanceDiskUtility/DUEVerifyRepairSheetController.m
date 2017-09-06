@@ -6,7 +6,6 @@
 //  Copyright © 2017 ulcheats. All rights reserved.
 //
 
-// ** TODO ** Upon exit of DiskUtil we need to kill repairPermissions if running.   -- Must be done by the Helper not us
 // ** TODO ** Tell people about the apple SMJobBlessUtil.py file ( they can use??? )
 
 
@@ -116,8 +115,9 @@ COMMUNICATIONS:;
                 if ( somethingFailed || !finishedSuccessfully )
                 {
                     NSLog( @"%@", somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication" );
-                    _logView.string = [_logView.string stringByAppendingString:somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication"];
-                    //[_logView setString:somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication"];
+                    _logView.string = [_logView.string stringByAppendingString:somethingFailed
+                                    ? @"Something went wrong during STAGE1 of XPC communication"
+                                    : @"Something went wrong during STAGE2 of XPC communication"];
                 }
                     
                 
@@ -156,7 +156,7 @@ COMMUNICATIONS:;
                 {
                     if (terminationStatus == 0) // RepairPermissionsUtility exited with status 0 => SUCCESS
                     {
-                        NSLog( @"Got RepairPermissionsUtility exit status= %lld", terminationStatus );
+                        NSLog( @"Got RepairPermissionsUtility exit status=0" );
                         
                         //
                         // Cool. Open RepairPermissionsUtility's log stored in /tmp
@@ -172,7 +172,6 @@ COMMUNICATIONS:;
                         
                         /* give it to our scrol view */
                         _logView.string = [_logView.string stringByAppendingString:str];
-//                        [_logTextField setPlaceholderString:str];
                         
                         finishedSuccessfully = YES;     /* tell the event handler that the XPC_ERROR_CONNECTION_INVALID that will follow is a sign all operations succeded, not an error */
                         
@@ -183,7 +182,6 @@ COMMUNICATIONS:;
                     else {
                         NSLog( @"Error! RepairPermissionsUtility exited with status:%lld", terminationStatus );
                         _logView.string = [_logView.string stringByAppendingString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
-                        //[_logLabel setPlaceholderString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
                     }
                     
                     [_progressIndicator stopAnimation:nil];
@@ -301,8 +299,7 @@ COMMUNICATIONS:;
     //  Start the process
     //
     
-    _logView.string = [_logView.string stringByAppendingString:@"starting"];
-    //[_logLabel setPlaceholderString:@"starting"];
+    _logView.string = [_logView.string stringByAppendingString:@"Starting!"];
     
     [self executeUtilityWithArguments:arguments];                                           //
                                                                                             //  this sends data to the sheetScrollView from the RepairPermissionsUtility

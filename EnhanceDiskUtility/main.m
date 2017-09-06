@@ -59,7 +59,6 @@
  *      ** TODO ** We need to deallocate the repair / verify toolbar item identifiers some time
  *      ** TODO ** There are actually more objects that need deallocation etc..
  *      ** TODO ** Enable ARC on all subprojects and this.
- *      TODO: Fix the repair permissions process (not working currently)
  */
 
 #import "main.h"
@@ -316,14 +315,12 @@ void DUELog( NSString * str )
     // Only show buttons as enabled if a device with a mount point is selected
     //
     
-    // TODO: also get the filesystem type and check if it is HFS/HFS+/...
-    
-    
     if (globalSelectedDiskHandle) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             NSString *mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
-            // NSLog(@"%@", mountPoint);
-            if (mountPoint) {
+            NSString *filesystem = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_filesystemType" );
+            
+            if (mountPoint && ( [filesystem isEqualToString:kSKDiskFileSystemOSX] || [filesystem isEqualToString:kSKDiskFileSystemAPFS] ) ) {
                 [verifyPermissionsItem setEnabled:true];
                 [repairPermissionsItem setEnabled:true];
             } else {

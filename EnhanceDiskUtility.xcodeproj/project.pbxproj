@@ -13,7 +13,6 @@
 		776253E81EFB01C90070463D /* StorageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 776253E71EFB01C90070463D /* StorageKit.framework */; };
 		7766D7A31F49F45800DCA444 /* RepairPermissionsUtility in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E461F311AF90041D107 /* RepairPermissionsUtility */; };
 		7778613E1F34E8E4007B145C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7778613D1F34E8E4007B145C /* main.m */; };
-		777861431F34E8E4007B145C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 777861421F34E8E4007B145C /* Assets.xcassets */; };
 		7778614C1F34E8F5007B145C /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 77F76DC91F34D82B00ADAD8B /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		7778614D1F34E928007B145C /* SMJobBlessHelperCaller.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		7786EE521F35E0A0001B6B5F /* VerifyRepairPermissions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7786EE511F35E0A0001B6B5F /* VerifyRepairPermissions.xib */; };
@@ -56,7 +55,6 @@
 		776811F31F3504CF0042DDBA /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMJobBlessHelperCaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7778613D1F34E8E4007B145C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		777861421F34E8E4007B145C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		777861471F34E8E4007B145C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7786EE511F35E0A0001B6B5F /* VerifyRepairPermissions.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VerifyRepairPermissions.xib; path = ../VerifyRepairPermissions.xib; sourceTree = "<group>"; };
 		77A79E461F311AF90041D107 /* RepairPermissionsUtility */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = RepairPermissionsUtility; sourceTree = "<group>"; };
@@ -119,7 +117,6 @@
 		777861381F34E8E4007B145C /* SMJobBlessHelperCaller */ = {
 			isa = PBXGroup;
 			children = (
-				777861421F34E8E4007B145C /* Assets.xcassets */,
 				777861471F34E8E4007B145C /* Info.plist */,
 				7778613D1F34E8E4007B145C /* main.m */,
 			);
@@ -293,7 +290,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				777861431F34E8E4007B145C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,6 +346,7 @@
 				DEVELOPMENT_TEAM = CC63MSFH9N;
 				INFOPLIST_FILE = SMJobBlessHelperCaller/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = org.npyl.EnhanceDiskUtility.SMJobBlessHelperCaller;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -366,6 +363,7 @@
 				DEVELOPMENT_TEAM = CC63MSFH9N;
 				INFOPLIST_FILE = SMJobBlessHelperCaller/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = org.npyl.EnhanceDiskUtility.SMJobBlessHelperCaller;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -476,6 +474,7 @@
 				);
 				INFOPLIST_FILE = EnhanceDiskUtility/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ulcheats.EnhanceDiskUtility;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -499,6 +498,7 @@
 				);
 				INFOPLIST_FILE = EnhanceDiskUtility/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = ulcheats.EnhanceDiskUtility;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -515,6 +515,7 @@
 				DEVELOPMENT_TEAM = CC63MSFH9N;
 				INFOPLIST_FILE = "$(SRCROOT)/SMJobBlessHelper/SMJobBlessHelper-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -541,6 +542,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/SMJobBlessHelper/SMJobBlessHelper-Info.plist";
 				INFOPLIST_PREPROCESS = YES;
 				INFOPLIST_PREPROCESSOR_DEFINITIONS = SMJOBBLESS_RELEASE;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
