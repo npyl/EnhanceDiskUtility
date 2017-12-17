@@ -19,16 +19,7 @@
 #define DBG_LOG(str)
 #endif
 
-//
-//  -- THESE ARE NOT NEEDED -- ** TODO ** Add function for cleaning up files in /Library/LaunchDaemons, PrivilegedHelpers,
-//      see: https://stackoverflow.com/questions/24040765/communicate-with-another-app-using-xpc
-//
-
-// ** TODO ** Upon exit of DiskUtil we need to kill repairPermissions if running
-
-//
-// -- THINK ITS FIXED -- TODO: fix these according to: https://stackoverflow.com/questions/8945770/getting-data-from-nstask-in-real-time-using-notifications-doesnt-work
-
+// XXX Upon exit of DiskUtil we need to kill repairPermissions if running
 
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
     
@@ -164,6 +155,6 @@ int main(int argc, const char *argv[]) {
     
     dispatch_main();
     
-    return EXIT_SUCCESS;        // ** TODO ** should this be EXIT_FAILURE ??? and xpc_main()???
+    return EXIT_SUCCESS;
 }
 
