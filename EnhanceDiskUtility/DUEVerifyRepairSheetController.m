@@ -115,7 +115,7 @@ COMMUNICATIONS:;
                 if ( somethingFailed || !finishedSuccessfully )
                 {
                     NSLog( @"%@", somethingFailed ? @"Something went wrong during STAGE1 of XPC communication" : @"Something went wrong during STAGE2 of XPC communication" );
-                    _logView.string = [_logView.string stringByAppendingString:somethingFailed
+                    _logView.stringValue = [_logView.stringValue stringByAppendingString:somethingFailed
                                     ? @"Something went wrong during STAGE1 of XPC communication"
                                     : @"Something went wrong during STAGE2 of XPC communication"];
                 }
@@ -171,7 +171,7 @@ COMMUNICATIONS:;
                         NSLog(@"%@",str);
                         
                         /* give it to our scrol view */
-                        _logView.string = [_logView.string stringByAppendingString:str];
+                        _logView.stringValue = [_logView.stringValue stringByAppendingString:str];
                         
                         finishedSuccessfully = YES;     /* tell the event handler that the XPC_ERROR_CONNECTION_INVALID that will follow is a sign all operations succeded, not an error */
                         
@@ -181,7 +181,7 @@ COMMUNICATIONS:;
                     }
                     else {
                         NSLog( @"Error! RepairPermissionsUtility exited with status:%lld", terminationStatus );
-                        _logView.string = [_logView.string stringByAppendingString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
+                        _logView.stringValue = [_logView.stringValue stringByAppendingString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
                     }
                     
                     [_progressIndicator stopAnimation:nil];
@@ -299,7 +299,7 @@ COMMUNICATIONS:;
     //  Start the process
     //
     
-    _logView.string = [_logView.string stringByAppendingString:@"Starting!"];
+    _logView.stringValue = [_logView.stringValue stringByAppendingString:@"Starting!"];
     
     [self executeUtilityWithArguments:arguments];                                           //
                                                                                             //  this sends data to the sheetScrollView from the RepairPermissionsUtility
