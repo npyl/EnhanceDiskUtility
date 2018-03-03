@@ -19,6 +19,7 @@
 		77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */; };
 		77DB43721EF47ADD00B1067C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DB43711EF47ADD00B1067C /* main.m */; };
 		77F76DD31F34D99500ADAD8B /* SMJobBlessHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DBCD0B1F32189A00186770 /* SMJobBlessHelper.m */; };
+		EC44307E204B5424006C4504 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = EC44307D204B5424006C4504 /* Credits.rtf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -66,6 +67,7 @@
 		77DBCD0A1F32189A00186770 /* SMJobBlessHelper-Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SMJobBlessHelper-Launchd.plist"; sourceTree = "<group>"; };
 		77DBCD0B1F32189A00186770 /* SMJobBlessHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMJobBlessHelper.m; sourceTree = "<group>"; };
 		77F76DC91F34D82B00ADAD8B /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = org.npyl.EnhanceDiskUtility.SMJobBlessHelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC44307D204B5424006C4504 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +157,7 @@
 		77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */ = {
 			isa = PBXGroup;
 			children = (
+				EC44307D204B5424006C4504 /* Credits.rtf */,
 				77A79E451F311ACC0041D107 /* Resources */,
 				776253E61EFB01C90070463D /* Frameworks */,
 				77274C5E1EF6D49000243954 /* ZKSwizzle */,
@@ -295,6 +298,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC44307E204B5424006C4504 /* Credits.rtf in Resources */,
 				7766D7A31F49F45800DCA444 /* RepairPermissionsUtility in Resources */,
 				77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */,
 				77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */,
