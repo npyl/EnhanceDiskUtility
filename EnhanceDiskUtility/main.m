@@ -54,7 +54,6 @@
  *
  *              checkout http://cocoadevcentral.com/articles/000037.php
  *
- *      4)  Check if ZKOrig functions actually work.
  *      ** TODO ** Check if this code works for cases when some toolbar items are not visible
  *      ** TODO ** We need to deallocate the repair / verify toolbar item identifiers some time
  *      ** TODO ** There are actually more objects that need deallocation etc..
