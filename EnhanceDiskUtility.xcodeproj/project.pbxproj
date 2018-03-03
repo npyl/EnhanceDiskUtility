@@ -52,7 +52,6 @@
 		775420FA1EF568AF0071FBEB /* ZKSwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZKSwizzle.m; path = ZKSwizzle/ZKSwizzle.m; sourceTree = "<group>"; };
 		776253E51EFB01520070463D /* StorageKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StorageKit.h; sourceTree = "<group>"; };
 		776253E71EFB01C90070463D /* StorageKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StorageKit.framework; path = ../../../../System/Library/PrivateFrameworks/StorageKit.framework; sourceTree = "<group>"; };
-		776811F31F3504CF0042DDBA /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SMJobBlessHelperCaller.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7778613D1F34E8E4007B145C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		777861471F34E8E4007B145C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -136,7 +135,6 @@
 		77DB435F1EF47AC800B1067C = {
 			isa = PBXGroup;
 			children = (
-				776811F31F3504CF0042DDBA /* Common.h */,
 				77DBCD031F32188500186770 /* SMJobBlessHelper */,
 				777861381F34E8E4007B145C /* SMJobBlessHelperCaller */,
 				77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */,
