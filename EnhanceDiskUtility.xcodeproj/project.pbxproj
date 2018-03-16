@@ -157,7 +157,7 @@
 		77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */ = {
 			isa = PBXGroup;
 			children = (
-				EC44307D204B5424006C4504 /* Credits.rtf */,
+				EC44307F204B5475006C4504 /* Supporting Files */,
 				77A79E451F311ACC0041D107 /* Resources */,
 				776253E61EFB01C90070463D /* Frameworks */,
 				77274C5E1EF6D49000243954 /* ZKSwizzle */,
@@ -180,6 +180,14 @@
 				77DBCD0B1F32189A00186770 /* SMJobBlessHelper.m */,
 			);
 			path = SMJobBlessHelper;
+			sourceTree = "<group>";
+		};
+		EC44307F204B5475006C4504 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EC44307D204B5424006C4504 /* Credits.rtf */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
