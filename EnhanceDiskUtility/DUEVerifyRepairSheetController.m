@@ -7,6 +7,7 @@
 //
 
 #import "DUEVerifyRepairSheetController.h"
+#import "ANSIEscapeHelper/AMR_ANSIEscapeHelper.h"
 
 
 @implementation DUEVerifyRepairSheetController
@@ -14,13 +15,29 @@
 - (void)log:(NSString *)string
 {
     /*
-     * Get a string with ASCI-escape-sequences and
+     * Get a string with ASCII-escape-sequences and
      * convert it to an attributed string that can
      * be logged to the DUEnhance `logView`.
      */
     
+    /*
+     * make this static so that we dont allocate
+     * it everytime we try to log something and
+     * thus reduce overhead
+     */
+    static AMR_ANSIEscapeHelper *ansiEscapeHelper = nil;
+    
+    if (!ansiEscapeHelper)
+        ansiEscapeHelper = [[AMR_ANSIEscapeHelper alloc] init];
+    
     dispatch_async(dispatch_get_main_queue(), ^{
-        self->_logView.stringValue = [self->_logView.stringValue stringByAppendingString:string];
+        
+        NSMutableAttributedString *tmp = [[NSMutableAttributedString alloc] initWithAttributedString:_logView.attributedStringValue];
+        
+        /* append new-ly converted string */
+        [tmp appendAttributedString:[ansiEscapeHelper attributedStringWithANSIEscapedString:string]];
+        
+        _logView.attributedStringValue = tmp;
         
         /*
          * XXX if we reach an end of view flush the previous lines of the string so that we not hit an overflow
@@ -36,6 +53,8 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
     /*
      *  Find Bundle Folder
      */
+    
+    [self log:@"\033[31mHELLO"];
     
     NSBundle *mainBundle = [NSBundle bundleWithIdentifier:kEnhanceDiskUtilityBundleIdentifier];
     NSString *bundleResources = [mainBundle resourcePath];
