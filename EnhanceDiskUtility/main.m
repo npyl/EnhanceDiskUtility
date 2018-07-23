@@ -98,9 +98,9 @@ NSString * const kNSToolbarRepairPermissionsItemIdentifier = @"RepairPermissions
 NSToolbarItem *verifyPermissionsItem = nil;
 NSToolbarItem *repairPermissionsItem = nil;
 
-SKDisk * globalSelectedDiskHandle = nil;
+SKDisk *globalSelectedDiskHandle = nil;
 
-void DUELog(NSString * str)
+void DUELog(NSString *str)
 {
 #ifdef DEBUG
     NSLog(@"%@", str);
@@ -113,59 +113,59 @@ void DUELog(NSString * str)
 
 - (void)VerifyPermissions:(id)sender
 {
-    DUELog( @"Told to verify permissions" );
+    DUELog(@"Told to verify permissions");
     
-    NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
+    NSString *mountPoint = ZKHookIvar(globalSelectedDiskHandle, NSString*, "_mountPoint");
     
-    DUEVerifyRepairSheetController * verifySheet = [[DUEVerifyRepairSheetController alloc] init];
+    DUEVerifyRepairSheetController *verifySheet = [[DUEVerifyRepairSheetController alloc] init];
     [verifySheet showSheet:kVerifySheetIdentifier forMountPoint:mountPoint];
 }
 
 - (void)RepairPermissions:(id)sender
 {
-    DUELog( @"Told to repair permissions!" );
-    
-    DUELog( @"Checking SIP status" );
+    DUELog(@"Told to repair permissions!");
+    DUELog(@"Checking SIP status");
     
     uint32_t config = 0;
-    
-    csr_get_active_config( &config );
+
+    csr_get_active_config(&config);
     
     //
     // Note: Apple is no longer using 0x67 but 0x77 for csrutil disabled!!!
     //
     
-    if( strcmp( _csr_check(CSR_ALLOW_UNRESTRICTED_FS, 0), "enabled" ) == 0 )
+    if(strcmp(_csr_check(CSR_ALLOW_UNRESTRICTED_FS, 0), "enabled") != 0)
     {
-        NSWindow * windowHandle = ZKHookIvar( self, NSWindow*, "_attachedToWindow" );
+        NSWindow * windowHandle = ZKHookIvar(self, NSWindow*, "_attachedToWindow");
         
         NSAlert *alert = [[NSAlert alloc] init];
         [alert addButtonWithTitle:@"OK"];
         [alert setMessageText:@"Warning! System Integrity Protection has enabled File System Protection!"];
-        [alert setInformativeText:@"File System Protection ( as part of System Integrity Protection ) is enabled! Some permissions may not be repaired!"];
+        [alert setInformativeText:@"File System Protection (as part of System Integrity Protection) is enabled! Some permissions may not be repaired!"];
         [alert setAlertStyle:NSAlertStyleWarning];
         
         [alert beginSheetModalForWindow:windowHandle completionHandler:^(NSModalResponse returnCode) { } ];
+        // XXX use that library here
     }
     
-    // run wolf's repair permissions app.
+    /* run wolf's utility */
     
-    NSString * mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
+    NSString * mountPoint = ZKHookIvar(globalSelectedDiskHandle, NSString*, "_mountPoint");
     
-    DUEVerifyRepairSheetController * repairSheet = [[DUEVerifyRepairSheetController alloc] init];
+    DUEVerifyRepairSheetController *repairSheet = [[DUEVerifyRepairSheetController alloc] init];
     [repairSheet showSheet:kRepairSheetIdentifier forMountPoint:mountPoint];
 }
 
 /* Overrides the default function */
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar
 {
-    NSMutableArray * toolbarDefaultItemIdentifiers = [NSMutableArray arrayWithArray: ZKOrig( NSArray*, toolbar )];
+    NSMutableArray * toolbarDefaultItemIdentifiers = [NSMutableArray arrayWithArray:ZKOrig(NSArray*, toolbar)];
     
     //
     //  Now patch a bit the array to add our buttons, too!
     //
     
-    [toolbarDefaultItemIdentifiers setObject:kNSToolbarVerifyPermissionsItemIdentifier atIndexedSubscript:( [toolbarDefaultItemIdentifiers count] - 1 )];
+    [toolbarDefaultItemIdentifiers setObject:kNSToolbarVerifyPermissionsItemIdentifier atIndexedSubscript:([toolbarDefaultItemIdentifiers count] - 1)];
     [toolbarDefaultItemIdentifiers addObject:kNSToolbarRepairPermissionsItemIdentifier];
     [toolbarDefaultItemIdentifiers addObject:NSToolbarFlexibleSpaceItemIdentifier];
     
@@ -180,7 +180,7 @@ void DUELog(NSString * str)
     {
         return verifyPermissionsItem;
     }
-    else if ([itemIdentifier isEqual: kNSToolbarRepairPermissionsItemIdentifier])
+    else if ([itemIdentifier isEqual:kNSToolbarRepairPermissionsItemIdentifier])
     {
         return repairPermissionsItem;
     }
@@ -190,18 +190,14 @@ void DUELog(NSString * str)
          *  call the default implementation
          */
 
-        return ZKOrig( NSToolbarItem*, toolbar, itemIdentifier, YES);
+        return ZKOrig(NSToolbarItem*, toolbar, itemIdentifier, YES);
     }
 }
 
 - (void) createVerifyRepairPermissionsToolbarItems
 {
-    /* ** TODO ** Can have autorelease here?? 
-        NO because when they get removed and then again put it crashes...
-     */
-    
-    verifyPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier: kNSToolbarVerifyPermissionsItemIdentifier];
-    repairPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier: kNSToolbarRepairPermissionsItemIdentifier];
+    verifyPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier:kNSToolbarVerifyPermissionsItemIdentifier];
+    repairPermissionsItem = [[NSToolbarItem alloc] initWithItemIdentifier:kNSToolbarRepairPermissionsItemIdentifier];
     
     //
     // Use a NSButton to match the other Toolbar items in Disk Utility
@@ -240,28 +236,16 @@ void DUELog(NSString * str)
     {
         DUELog(@"First call: Must inject the buttons");
         
-        gotSUWorkspaceViewControllerHandle = true;      // DONT run into this block again
+        gotSUWorkspaceViewControllerHandle = true;      /* DONT run into this block again */
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            NSToolbar * toolbarHandle = ZKHookIvar(self, NSToolbar*, "_toolbar");
+            NSToolbar *toolbarHandle = ZKHookIvar(self, NSToolbar*, "_toolbar");
             
             if (!toolbarHandle)
             {
                 DUELog(@"DUEnhance HACK: Failed to get toolbarHandle");
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-
-                    NSAlert *alert = [[NSAlert alloc] init];
-                    [alert addButtonWithTitle:@"OK"];
-                    [alert setMessageText:@"Failed to get toolbar handle!"];
-                    [alert setInformativeText:@"Disk Utility will work without the Verify/Repair Permissions addon"];
-                    [alert setAlertStyle:NSAlertStyleCritical];
-                    [alert runModal];
-                });
-                
-                
-                return;                                     // break the code, DONT reach to [toolbar insert...blabla]
+                return; /* quit DUEnhance */
             }
             
             //
@@ -285,20 +269,22 @@ void DUELog(NSString * str)
     // Only show buttons as enabled if a device with a mount point is selected
     //
     
-    if (globalSelectedDiskHandle) {
+    if (globalSelectedDiskHandle)
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            NSString *mountPoint = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_mountPoint" );
-            NSString *filesystem = ZKHookIvar( globalSelectedDiskHandle, NSString*, "_filesystemType" );
+            NSString *mountPoint = ZKHookIvar(globalSelectedDiskHandle, NSString*, "_mountPoint");
+            NSString *filesystem = ZKHookIvar(globalSelectedDiskHandle, NSString*, "_filesystemType");
             
-            if (mountPoint && ( [filesystem isEqualToString:kSKDiskFileSystemOSX] || [filesystem isEqualToString:kSKDiskFileSystemAPFS] ) ) {
+            if (mountPoint && ([filesystem isEqualToString:kSKDiskFileSystemOSX] || [filesystem isEqualToString:kSKDiskFileSystemAPFS]))
+            {
                 [verifyPermissionsItem setEnabled:true];
                 [repairPermissionsItem setEnabled:true];
-            } else {
+            }
+            else
+            {
                 [verifyPermissionsItem setEnabled:false];
                 [repairPermissionsItem setEnabled:false];
             }
         });
-    }
 }
 
 @end
@@ -307,10 +293,10 @@ void DUELog(NSString * str)
 
 - (void)viewDidLoad
 {
-    DUELog( @"Into current WorkspaceViewController" );
-    DUELog( @"Getting current selectedDisk handle :)" );
+    DUELog(@"Into current WorkspaceViewController...");
+    DUELog(@"Getting current selectedDisk handle...");
     
-    globalSelectedDiskHandle = ZKHookIvar( self, SKDisk*, "_disk" );
+    globalSelectedDiskHandle = ZKHookIvar(self, SKDisk*, "_disk");
     
     ZKOrig(void);
 }
@@ -319,12 +305,12 @@ void DUELog(NSString * str)
 
 @implementation CoreClass
 
-+ (void) load
++ (void)load
 {
     DUELog(@"DUEnhance plugin loading");
     
-    ZKSwizzle( _due_SUWorkspaceViewController, SUWorkspaceViewController );
-    ZKSwizzle( DUEnhance, SUToolbarController );
+    ZKSwizzle(_due_SUWorkspaceViewController, SUWorkspaceViewController);
+    ZKSwizzle(DUEnhance, SUToolbarController);
 }
 
 @end

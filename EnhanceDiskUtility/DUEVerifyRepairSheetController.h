@@ -19,10 +19,10 @@ enum {
     xpc_connection_t connection;
 }
 
-@property (assign) IBOutlet NSWindow *              sheet;
-@property (assign) IBOutlet NSTextField *           logView;
-@property (assign) IBOutlet NSButton *              doneButton;
-@property (assign) IBOutlet NSProgressIndicator *   progressIndicator;
+@property (assign) IBOutlet NSWindow *sheet;
+@property (assign) IBOutlet NSTextField *logView;
+@property (assign) IBOutlet NSButton *doneButton;
+@property (assign) IBOutlet NSProgressIndicator *progressIndicator;
 
 - (void)showSheet:(int)sheetIdentifier forMountPoint:(NSString*)mountPoint;
 - (IBAction)closeSheet:(id)sender;
