@@ -44,7 +44,7 @@
 #import "StorageKit.h"
 #import "ZKSwizzle/ZKSwizzle.h"
 #import "DUEVerifyRepairSheetController.h"
-
+#import "Extensions/NSAlert+runModalSheet.h"
 
 //
 //  SYSTEM INTEGRITY PROTECTION RELATED
@@ -136,21 +136,20 @@ void DUELog(NSString *str)
     
     if(strcmp(_csr_check(CSR_ALLOW_UNRESTRICTED_FS, 0), "enabled") != 0)
     {
-        NSWindow * windowHandle = ZKHookIvar(self, NSWindow*, "_attachedToWindow");
+        NSWindow *windowHandle = ZKHookIvar(self, NSWindow*, "_attachedToWindow");
         
-        NSAlert *alert = [[NSAlert alloc] init];
+        NSExtendedAlert *alert = [[NSExtendedAlert alloc] init];
         [alert addButtonWithTitle:@"OK"];
-        [alert setMessageText:@"Warning! System Integrity Protection has enabled File System Protection!"];
+        [alert setMessageText:@"Warning! File System Protection is enabled!"];
         [alert setInformativeText:@"File System Protection (as part of System Integrity Protection) is enabled! Some permissions may not be repaired!"];
         [alert setAlertStyle:NSAlertStyleWarning];
         
-        [alert beginSheetModalForWindow:windowHandle completionHandler:^(NSModalResponse returnCode) { } ];
-        // XXX use that library here
+        [alert runModalSheetForWindow:windowHandle];
     }
     
     /* run wolf's utility */
     
-    NSString * mountPoint = ZKHookIvar(globalSelectedDiskHandle, NSString*, "_mountPoint");
+    NSString *mountPoint = ZKHookIvar(globalSelectedDiskHandle, NSString*, "_mountPoint");
     
     DUEVerifyRepairSheetController *repairSheet = [[DUEVerifyRepairSheetController alloc] init];
     [repairSheet showSheet:kRepairSheetIdentifier forMountPoint:mountPoint];
@@ -159,7 +158,7 @@ void DUELog(NSString *str)
 /* Overrides the default function */
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar
 {
-    NSMutableArray * toolbarDefaultItemIdentifiers = [NSMutableArray arrayWithArray:ZKOrig(NSArray*, toolbar)];
+    NSMutableArray *toolbarDefaultItemIdentifiers = [NSMutableArray arrayWithArray:ZKOrig(NSArray*, toolbar)];
     
     //
     //  Now patch a bit the array to add our buttons, too!

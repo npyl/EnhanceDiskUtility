@@ -54,8 +54,6 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
      *  Start IPC with Helper
      */
     
-    /* Find Resources folder */
-    
     __block BOOL somethingFailed = NO;                  /* must not be YES */
     __block BOOL finishedSuccessfully = NO;             /* must become YES when verify/repair finished */
     
@@ -150,7 +148,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
                 }
                 else
                 {
-                    NSLog(@"Error! RepairPermissionsUtility exited with status:%lld", terminationStatus);
+                    NSLog(@"DUE: Error! RepairPermissionsUtility exited with status:%lld", terminationStatus);
                     _logView.stringValue = [_logView.stringValue stringByAppendingString:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
                 }
                 
@@ -158,15 +156,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
             }
             else
             {
-                // TODO: must finish this...
-                //
-                //  Problem is when passing the parameter --output /tmp/RepairPermissions.log to RepairPermissionsUtility it does not give output ( or the output is not detectable? )
-                //  I will see if I can find a solution to this so that we print the percentage at least :)
-                //
-                //  For this reason I disabled the pipe functionality in Helper ( This means less overhead for EnhanceDiskUtility which is a positive aspect )
-                //
-                
-                //NSLog( @"%s", utilityData );    // dbg
+                // XXX print text from utility
             }
         }
     });
@@ -260,13 +250,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
     /*
      *  Start the process
      */
-    
-    _logView.stringValue = [_logView.stringValue stringByAppendingString:@"Starting!"];
-    
-    [self executeUtilityWithArguments:arguments];                                           //
-                                                                                            //  this sends data to the sheetScrollView from the RepairPermissionsUtility
-                                                                                            //  once for any reason this ends the sheet waits there to be closed with a button
-                                                                                            //
+    [self executeUtilityWithArguments:arguments];
 }
 
 - (IBAction)closeSheet:(id)sender
