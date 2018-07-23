@@ -19,8 +19,6 @@
 #define DBG_LOG(str)
 #endif
 
-// XXX Upon exit of DiskUtil we need to kill repairPermissions if running
-
 static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t event) {
     
     NSTask * task = nil;        /* the utility */
@@ -43,7 +41,7 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             syslog(LOG_NOTICE, "Got unexpected (and unsupported) XPC ERROR");
         }
 
-        if ( task && [task isRunning] )     // TODO: this doesnt work???
+        if (task && [task isRunning])     // TODO: this doesnt work???
             [task terminate];
 
         exit( EXIT_FAILURE );
@@ -56,15 +54,15 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         
         xpc_connection_t connection = xpc_dictionary_get_remote_connection(event);
         
-        const char * mode = xpc_dictionary_get_string( event, "mode" );
-        const char * mountPoint = xpc_dictionary_get_string( event, "mountPoint" );
-        const char * repairPermissionsUtilityPath = xpc_dictionary_get_string( event, "RepairPermissionsUtilityPath" );
+        const char * mode = xpc_dictionary_get_string(event, "mode");
+        const char * mountPoint = xpc_dictionary_get_string(event, "mountPoint");
+        const char * repairPermissionsUtilityPath = xpc_dictionary_get_string(event, "RepairPermissionsUtilityPath");
         
-        if (!mode || !mountPoint || !repairPermissionsUtilityPath )
+        if (!mode || !mountPoint || !repairPermissionsUtilityPath)
             return;
         
         
-        NSLog( @"mode = %s\nmntPoint = %s\nRepairPermissionsUtilityPath = %s", mode, mountPoint, repairPermissionsUtilityPath );
+        NSLog(@"mode = %s\nmntPoint = %s\nRepairPermissionsUtilityPath = %s", mode, mountPoint, repairPermissionsUtilityPath);
         
         //
         //  Inform client we got the information needed
@@ -73,9 +71,9 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         
         if (!reply) return;
         
-        xpc_dictionary_set_string( reply, "mode", "GOT_MODE" );
-        xpc_dictionary_set_string( reply, "mountPoint", "GOT_MNTPOINT" );
-        xpc_connection_send_message( connection, reply );
+        xpc_dictionary_set_string(reply, "mode", "GOT_MODE");
+        xpc_dictionary_set_string(reply, "mountPoint", "GOT_MNTPOINT");
+        xpc_connection_send_message(connection, reply);
         
         
         //
@@ -85,13 +83,7 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         
         task = [[NSTask alloc] init];
         [task setLaunchPath:[NSString stringWithUTF8String:repairPermissionsUtilityPath]];
-        [task setArguments:@[ @"--output", @"/tmp/RepairPermissionsUtility.log", [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint]  ]];
-        
-        /*
-         *
-         *  Disabled the StandardOutput support because passing the --output parameter disables loging percentage, so pipe is pointless
-         *
-         *
+        [task setArguments:@[[NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint]]];
          
         task.standardOutput = [NSPipe pipe];
         
@@ -99,10 +91,9 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             NSData *data = [file availableData];                                                                // this will read to EOF, so call only once
             NSString * stringData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             
-            xpc_dictionary_set_string( utilityData, "utilityData", [stringData UTF8String] );
-            xpc_connection_send_message( connection, utilityData );
+            xpc_dictionary_set_string(utilityData, "utilityData", [stringData UTF8String]);
+            xpc_connection_send_message(connection, utilityData);
         }];
-         */
         
         [task setTerminationHandler:^(NSTask *task) {
             //  NOTE: enable when using pipe
@@ -113,15 +104,15 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
             //
             
             
-            xpc_dictionary_set_string( utilityData, "utilityData", "FINISHED!" );
-            xpc_dictionary_set_int64( utilityData, "terminationStatus", [task terminationStatus] );
-            xpc_connection_send_message( connection, utilityData );
+            xpc_dictionary_set_string(utilityData, "utilityData", "FINISHED!");
+            xpc_dictionary_set_int64(utilityData, "terminationStatus", [task terminationStatus]);
+            xpc_connection_send_message(connection, utilityData);
             
             xpc_connection_cancel(connection);
-            exit(EXIT_SUCCESS);
         }];
         
         [task launch];
+        [task waitUntilExit];
     }
 }
 
@@ -135,18 +126,20 @@ static void __XPC_Connection_Handler(xpc_connection_t connection)  {
 	xpc_connection_resume(connection);
 }
 
-int main(int argc, const char *argv[]) {
-    
+int main(int argc, const char *argv[])
+{
     xpc_connection_t service = xpc_connection_create_mach_service("org.npyl.EnhanceDiskUtility.SMJobBlessHelper",
                                                                   dispatch_get_main_queue(),
                                                                   XPC_CONNECTION_MACH_SERVICE_LISTENER);
     
-    if (!service) {
+    if (!service)
+    {
         syslog(LOG_NOTICE, "Failed to create service.");
         exit(EXIT_FAILURE);
     }
     
     syslog(LOG_NOTICE, "Configuring connection event handler for helper");
+    
     xpc_connection_set_event_handler(service, ^(xpc_object_t connection) {
         __XPC_Connection_Handler(connection);
     });

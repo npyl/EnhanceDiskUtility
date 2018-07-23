@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0996E4CF21068B98009B5E82 /* AMR_ANSIEscapeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0996E4CE21068B98009B5E82 /* AMR_ANSIEscapeHelper.m */; };
+		0996E4D321068BD9009B5E82 /* NSAlert+runModalSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 0996E4D121068BD9009B5E82 /* NSAlert+runModalSheet.m */; };
 		77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */; };
 		7746F04E1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7746F04D1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m */; };
 		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -46,6 +48,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0996E4CD21068B98009B5E82 /* AMR_ANSIEscapeHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMR_ANSIEscapeHelper.h; sourceTree = "<group>"; };
+		0996E4CE21068B98009B5E82 /* AMR_ANSIEscapeHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMR_ANSIEscapeHelper.m; sourceTree = "<group>"; };
+		0996E4D121068BD9009B5E82 /* NSAlert+runModalSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSAlert+runModalSheet.m"; path = "EnhanceDiskUtility/Extensions/NSAlert+runModalSheet.m"; sourceTree = SOURCE_ROOT; };
+		0996E4D221068BD9009B5E82 /* NSAlert+runModalSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSAlert+runModalSheet.h"; path = "EnhanceDiskUtility/Extensions/NSAlert+runModalSheet.h"; sourceTree = SOURCE_ROOT; };
 		77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ZKSwizzle_LICENSE; path = ZKSwizzle/ZKSwizzle_LICENSE; sourceTree = "<group>"; };
 		7746F04C1F3B234C0034FD11 /* DUEVerifyRepairSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DUEVerifyRepairSheetController.h; sourceTree = "<group>"; };
 		7746F04D1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DUEVerifyRepairSheetController.m; sourceTree = "<group>"; };
@@ -96,6 +102,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0996E4C821068987009B5E82 /* ANSIEscapeHelper */ = {
+			isa = PBXGroup;
+			children = (
+				0996E4CD21068B98009B5E82 /* AMR_ANSIEscapeHelper.h */,
+				0996E4CE21068B98009B5E82 /* AMR_ANSIEscapeHelper.m */,
+			);
+			path = ANSIEscapeHelper;
+			sourceTree = "<group>";
+		};
+		0996E4D021068BBC009B5E82 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0996E4D221068BD9009B5E82 /* NSAlert+runModalSheet.h */,
+				0996E4D121068BD9009B5E82 /* NSAlert+runModalSheet.m */,
+			);
+			name = Extensions;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		77274C5E1EF6D49000243954 /* ZKSwizzle */ = {
 			isa = PBXGroup;
 			children = (
@@ -157,9 +182,11 @@
 		77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */ = {
 			isa = PBXGroup;
 			children = (
+				0996E4D021068BBC009B5E82 /* Extensions */,
 				EC44307F204B5475006C4504 /* Supporting Files */,
 				77A79E451F311ACC0041D107 /* Resources */,
 				776253E61EFB01C90070463D /* Frameworks */,
+				0996E4C821068987009B5E82 /* ANSIEscapeHelper */,
 				77274C5E1EF6D49000243954 /* ZKSwizzle */,
 				77DB436B1EF47AC800B1067C /* Info.plist */,
 				776253E51EFB01520070463D /* StorageKit.h */,
@@ -329,6 +356,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0996E4CF21068B98009B5E82 /* AMR_ANSIEscapeHelper.m in Sources */,
+				0996E4D321068BD9009B5E82 /* NSAlert+runModalSheet.m in Sources */,
 				77DB43721EF47ADD00B1067C /* main.m in Sources */,
 				7746F04E1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m in Sources */,
 				775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */,

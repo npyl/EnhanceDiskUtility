@@ -11,6 +11,24 @@
 
 @implementation DUEVerifyRepairSheetController
 
+- (void)log:(NSString *)string
+{
+    /*
+     * Get a string with ASCI-escape-sequences and
+     * convert it to an attributed string that can
+     * be logged to the DUEnhance `logView`.
+     */
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self->_logView.stringValue = [self->_logView.stringValue stringByAppendingString:string];
+        
+        /*
+         * XXX if we reach an end of view flush the previous lines of the string so that we not hit an overflow
+         */
+    });
+    
+}
+
 NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
 
 - (void)executeUtilityWithArguments:(NSArray*)arguments
@@ -27,7 +45,6 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
         NSLog(@"Error: failed to get bundle path.");
         return;
     }
-    
     
     /*
      *  Root or Normal User ?
@@ -156,7 +173,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
             }
             else
             {
-                // XXX print text from utility
+                
             }
         }
     });
