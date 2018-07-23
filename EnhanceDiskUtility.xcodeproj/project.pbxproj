@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */; };
 		7746F04E1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7746F04D1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m */; };
-		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; };
+		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		776253E81EFB01C90070463D /* StorageKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 776253E71EFB01C90070463D /* StorageKit.framework */; };
 		7766D7A31F49F45800DCA444 /* RepairPermissionsUtility in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E461F311AF90041D107 /* RepairPermissionsUtility */; };
 		7778613E1F34E8E4007B145C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7778613D1F34E8E4007B145C /* main.m */; };
@@ -472,7 +472,7 @@
 		77DB436F1EF47AC800B1067C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = CC63MSFH9N;
@@ -496,7 +496,7 @@
 		77DB43701EF47AC800B1067C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = CC63MSFH9N;

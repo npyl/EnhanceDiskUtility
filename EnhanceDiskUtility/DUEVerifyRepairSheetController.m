@@ -143,7 +143,7 @@ NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
                     //
                     
                     NSError * err = nil;
-                    NSString * str = [[NSString alloc] initWithContentsOfFile:@"/tmp/RepairPermissionsUtility.log" encoding:NSUTF8StringEncoding error:&err];
+                    NSString *str = [NSString stringWithContentsOfFile:@"/tmp/RepairPermissionsUtility.log" encoding:NSUTF8StringEncoding error:&err];
                     
                     if (!str)
                         return;
@@ -155,7 +155,7 @@ NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
                     
                     finishedSuccessfully = YES;     /* tell the event handler that the XPC_ERROR_CONNECTION_INVALID that will follow is a sign all operations succeded, not an error */
                     
-                    [str release];
+                    //[str release];
                 }
                 else
                 {
@@ -207,7 +207,7 @@ NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
     
     xpc_connection_send_message_with_reply(connection, initialMessage, dispatch_get_main_queue(), ^(xpc_object_t event) {
 
-        xpc_release(initialMessage);
+        //xpc_release(initialMessage);
         
         const char* responseForMode = xpc_dictionary_get_string( event, "mode" );
         const char* responseForMountPoint = xpc_dictionary_get_string( event, "mountPoint" );
@@ -293,14 +293,14 @@ NSString * kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
     {
         NSLog(@"releasing connection related...");
         xpc_connection_cancel(connection);
-        xpc_release(connection);
+        //xpc_release(connection);
     }
         
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"Releasing sheet controller!");                      //
-        [self release];                                             //  I cant think of another way to ensure the sheetController gets released the right time
-                                                                    //
-    });
+    //dispatch_async(dispatch_get_main_queue(), ^{
+    //    NSLog(@"Releasing sheet controller!");                      //
+    //    [self release];                                             //  I cant think of another way to ensure the sheetController gets released the right time
+    //                                                                //
+    //});
 }
 
 @end
