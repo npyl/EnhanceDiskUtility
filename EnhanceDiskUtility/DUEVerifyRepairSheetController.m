@@ -126,7 +126,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
             
             if (!finishedSuccessfully)
             {
-                [self log:@"\n\n \033[31mDUE: Failed to Repair/Verify Permissions; XPC connection problem"];
+                [self log:@"\n\n \033[31mFailed to Repair/Verify Permissions; XPC connection problem"];
             }
             
             [_progressIndicator stopAnimation:nil];

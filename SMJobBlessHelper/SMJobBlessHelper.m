@@ -102,11 +102,9 @@
         
         task = [[NSTask alloc] init];
         [task setLaunchPath:[NSString stringWithUTF8String:repairPermissionsUtilityPath]];
-        [task setArguments:@[[NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint]]];
+        [task setArguments:@[@"--no-output", [NSString stringWithUTF8String:mode], [NSString stringWithUTF8String:mountPoint]]];
         [task setStandardOutput:outputPipe];
         [task setStandardError:errorPipe];
-        
-        NSLog(@"asdasdasdsamode = %s\nmntPoint = %s\nRepairPermissionsUtilityPath = %s", mode, mountPoint, repairPermissionsUtilityPath);
         
         NSFileHandle *outputHandle = [outputPipe fileHandleForReading];
         NSFileHandle *errorHandle = [errorPipe fileHandleForReading];
