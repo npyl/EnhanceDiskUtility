@@ -15,7 +15,7 @@
 - (void)log:(NSString *)string
 {
     /*
-     * Get a string with ASCII-escape-sequences and
+     * Get a string with ANSI-escape-sequences and
      * convert it to an attributed string that can
      * be logged to the DUEnhance `logView`.
      */
