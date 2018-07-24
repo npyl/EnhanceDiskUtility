@@ -227,7 +227,9 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
     if (!_sheet)
         [[NSBundle bundleWithIdentifier:kEnhanceDiskUtilityBundleIdentifier] loadNibNamed:@"VerifyRepairPermissions" owner:self topLevelObjects:nil];
     
-    [[NSApp mainWindow] beginSheet:self.sheet completionHandler:^(NSModalResponse returnCode) {}];
+    [[NSApp mainWindow] beginSheet:self.sheet completionHandler:^(NSModalResponse returnCode) {
+        [[NSApp mainWindow] endSheet:self.sheet];
+    }];
     
     [_progressIndicator startAnimation:nil];
     
@@ -239,8 +241,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
 
 - (IBAction)closeSheet:(id)sender
 {
-    [[NSApp mainWindow] endSheet:self.sheet];
-    self.sheet = nil;
+    [self.sheet close];
     
     //
     //  End the connection
