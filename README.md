@@ -18,6 +18,10 @@ Then double-click it and it will be installed to mySIMBL. Just make sure it has 
 
 [mySIBMLE](https://github.com/w0lfschild/mySIMBL)
 
+# Donate
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NSV636CUWX754)
+
 # License
 
 MIT License!
