@@ -50,6 +50,23 @@ THE SOFTWARE.
 #define kAMRAttrDictKey_attrName       @"attributeName"
 #define kAMRAttrDictKey_attrValue      @"attributeValue"
 
+/* More Useful Defines */
+#define kANSIColorPrefKey_FgBlack    @"ansiColorsFgBlack"
+#define kANSIColorPrefKey_FgWhite    @"ansiColorsFgWhite"
+#define kANSIColorPrefKey_FgRed        @"ansiColorsFgRed"
+#define kANSIColorPrefKey_FgGreen    @"ansiColorsFgGreen"
+#define kANSIColorPrefKey_FgYellow    @"ansiColorsFgYellow"
+#define kANSIColorPrefKey_FgBlue    @"ansiColorsFgBlue"
+#define kANSIColorPrefKey_FgMagenta    @"ansiColorsFgMagenta"
+#define kANSIColorPrefKey_FgCyan    @"ansiColorsFgCyan"
+#define kANSIColorPrefKey_BgBlack    @"ansiColorsBgBlack"
+#define kANSIColorPrefKey_BgWhite    @"ansiColorsBgWhite"
+#define kANSIColorPrefKey_BgRed        @"ansiColorsBgRed"
+#define kANSIColorPrefKey_BgGreen    @"ansiColorsBgGreen"
+#define kANSIColorPrefKey_BgYellow    @"ansiColorsBgYellow"
+#define kANSIColorPrefKey_BgBlue    @"ansiColorsBgBlue"
+#define kANSIColorPrefKey_BgMagenta    @"ansiColorsBgMagenta"
+#define kANSIColorPrefKey_BgCyan    @"ansiColorsBgCyan"
 
 /*!
  @enum          AMR_SGRCode
@@ -290,7 +307,7 @@ typedef enum
  @abstract      Returns a color SGR code that corresponds to a given color.
 
  @discussion    This method matches colors to their equivalent SGR codes
-                by going through the colors specified in the ansiColors
+ by going colorh the colors specified in the ansiColors
                 dictionary, and if ansiColors is null or if a match is
                 not found there, by comparing the given color to the
                 standard basic colors (NSColor's redColor, blueColor
@@ -314,8 +331,8 @@ typedef enum
  @discussion    This method attempts to find the closest ANSI color to
                 aColor and return its SGR code.
 
- @param aColor          The color to get a closest color SGR code match for
- @param aForeground     Whether you want a foreground or background color code
+ @param color          The color to get a closest color SGR code match for
+ @param foreground     Whether you want a foreground or background color code
 
  @result        SGR code for the ANSI color that is closest to aColor.
  */

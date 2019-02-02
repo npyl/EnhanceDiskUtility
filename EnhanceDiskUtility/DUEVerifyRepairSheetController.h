@@ -19,7 +19,7 @@ enum {
 }
 
 @property (assign) IBOutlet NSWindow *sheet;
-@property (assign) IBOutlet NSTextField *logView;
+@property (unsafe_unretained) IBOutlet NSTextView *logView;
 @property (assign) IBOutlet NSButton *doneButton;
 @property (assign) IBOutlet NSProgressIndicator *progressIndicator;
 

@@ -73,22 +73,8 @@ typedef uint32_t csr_config_t;
 extern int csr_check(csr_config_t mask);
 extern int csr_get_active_config(csr_config_t *config);
 
-char * _csr_check(aMask, aFlipflag)
-{
-    bool stat = 0;
-    
-    // Syscall
-    if (csr_check(aMask) != 0)
-    {
-        stat = (aFlipflag) ? 0 : 1;
-    }
-    else
-    {
-        stat = (aFlipflag) ? 1 : 0;
-    }
-    
-    return stat ? "enabled" : "disabled";
-}
+/* Our custom checker */
+char * _csr_check(int aMask, bool aFlipflag);
 
 //==============================================================================
 
@@ -105,6 +91,23 @@ void DUELog(NSString *str)
 #ifdef DEBUG
     NSLog(@"%@", str);
 #endif
+}
+
+char * _csr_check(int aMask, bool aFlipflag)
+{
+    bool stat = 0;
+    
+    // Syscall
+    if (csr_check(aMask) != 0)
+    {
+        stat = (aFlipflag) ? 0 : 1;
+    }
+    else
+    {
+        stat = (aFlipflag) ? 1 : 0;
+    }
+    
+    return stat ? "enabled" : "disabled";
 }
 
 //==============================================================================

@@ -14,6 +14,9 @@
 
 - (void)log:(NSString *)string
 {
+    if (string == nil)
+        return;
+    
     /*
      * Get a string with ANSI-escape-sequences and
      * convert it to an attributed string that can
@@ -27,17 +30,62 @@
      */
     static AMR_ANSIEscapeHelper *ansiEscapeHelper = nil;
     
-    if (!ansiEscapeHelper)
+    if (!ansiEscapeHelper) {
         ansiEscapeHelper = [[AMR_ANSIEscapeHelper alloc] init];
+        
+        // set colors & font to use to ansiEscapeHelper
+        NSDictionary *colorPrefDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
+                                           [NSNumber numberWithInt:AMR_SGRCodeFgBlack], kANSIColorPrefKey_FgBlack,
+                                           [NSNumber numberWithInt:AMR_SGRCodeFgWhite], kANSIColorPrefKey_FgWhite,
+                                           [NSNumber numberWithInt:AMR_SGRCodeFgRed], kANSIColorPrefKey_FgRed,
+                                           [NSNumber numberWithInt:AMR_SGRCodeFgGreen], kANSIColorPrefKey_FgGreen,
+                                           [NSNumber numberWithInt:AMR_SGRCodeFgYellow], kANSIColorPrefKey_FgYellow,
+                                           [NSNumber numberWithInt:AMR_SGRCodeFgBlue], kANSIColorPrefKey_FgBlue,
+                                           [NSNumber numberWithInt:AMR_SGRCodeFgMagenta], kANSIColorPrefKey_FgMagenta,
+                                           [NSNumber numberWithInt:AMR_SGRCodeFgCyan], kANSIColorPrefKey_FgCyan,
+                                           [NSNumber numberWithInt:AMR_SGRCodeBgBlack], kANSIColorPrefKey_BgBlack,
+                                           [NSNumber numberWithInt:AMR_SGRCodeBgWhite], kANSIColorPrefKey_BgWhite,
+                                           [NSNumber numberWithInt:AMR_SGRCodeBgRed], kANSIColorPrefKey_BgRed,
+                                           [NSNumber numberWithInt:AMR_SGRCodeBgGreen], kANSIColorPrefKey_BgGreen,
+                                           [NSNumber numberWithInt:AMR_SGRCodeBgYellow], kANSIColorPrefKey_BgYellow,
+                                           [NSNumber numberWithInt:AMR_SGRCodeBgBlue], kANSIColorPrefKey_BgBlue,
+                                           [NSNumber numberWithInt:AMR_SGRCodeBgMagenta], kANSIColorPrefKey_BgMagenta,
+                                           [NSNumber numberWithInt:AMR_SGRCodeBgCyan], kANSIColorPrefKey_BgCyan,
+                                           nil];
+        
+        NSUInteger iColorPrefDefaultsKey;
+        NSData *colorData;
+        NSString *thisPrefName;
+        for (iColorPrefDefaultsKey = 0; iColorPrefDefaultsKey < [[colorPrefDefaults allKeys] count]; iColorPrefDefaultsKey++)
+        {
+            thisPrefName = [[colorPrefDefaults allKeys] objectAtIndex:iColorPrefDefaultsKey];
+            colorData = [[NSUserDefaults standardUserDefaults] dataForKey:thisPrefName];
+            if (colorData != nil)
+            {
+                NSColor *thisColor = (NSColor *)[NSUnarchiver unarchiveObjectWithData:colorData];
+                [[ansiEscapeHelper ansiColors] setObject:thisColor forKey:[colorPrefDefaults objectForKey:thisPrefName]];
+            }
+        }
+    }
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        NSMutableAttributedString *tmp = [[NSMutableAttributedString alloc] initWithAttributedString:_logView.attributedStringValue];
+        [self->_logView setBaseWritingDirection:NSWritingDirectionLeftToRight];
         
-        /* append new-ly converted string */
-        [tmp appendAttributedString:[ansiEscapeHelper attributedStringWithANSIEscapedString:string]];
+        [ansiEscapeHelper setFont:[self->_logView font]];
         
-        _logView.attributedStringValue = tmp;
+        // get attributed string and display it
+        NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithAttributedString:self->_logView.attributedString];
+        [attrStr appendAttributedString:[ansiEscapeHelper attributedStringWithANSIEscapedString:string]];
+        
+        [[self->_logView textStorage] setAttributedString:attrStr];
+        
+//        NSMutableAttributedString *tmp =
+//
+//        /* append new-ly converted string */
+//        [tmp appendAttributedString:[ansiEscapeHelper attributedStringWithANSIEscapedString:string]];
+//
+//        _logView.attributedStringValue = tmp;
         
         /*
          * XXX if we reach an end of view flush the previous lines of the string so that we not hit an overflow
@@ -129,7 +177,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
                 [self log:@"\n\n \033[31mFailed to Repair/Verify Permissions; XPC connection problem"];
             }
             
-            [_progressIndicator stopAnimation:nil];
+            [self->_progressIndicator stopAnimation:nil];
         }
         else
         {
@@ -158,7 +206,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
                     [self log:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
                 }
                 
-                [_progressIndicator stopAnimation:nil];
+                [self->_progressIndicator stopAnimation:nil];
             }
             else
             {
