@@ -23,19 +23,14 @@
     xpc_connection_t connection_handle;
     xpc_connection_t service;
 }
-
-- (instancetype)init;
-- (void)dispatchMain;
-
 @end
 
 @implementation SMJobBlessHelper
 
-- (void)receivedData:(NSNotification*)notif
+- (void)receivedData:(NSFileHandle *)fh
 {
-    NSLog(@"DUE: SEND");
+//    syslog(LOG_NOTICE, "DUE: SEND");
     
-    NSFileHandle *fh = [notif object];
     NSData *data = [fh availableData];
     if (data.length > 0)
     {
@@ -43,7 +38,7 @@
         [fh waitForDataInBackgroundAndNotify];
         NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         
-        syslog(LOG_NOTICE, "Sending %s", [str UTF8String]);
+//        syslog(LOG_NOTICE, "Sending %s", [str UTF8String]);
         
         xpc_object_t msg = xpc_dictionary_create(NULL, NULL, 0);
         xpc_dictionary_set_string(msg, "utilityData", [str UTF8String]);
@@ -57,20 +52,11 @@
     
     xpc_type_t type = xpc_get_type(event);
     
-    if (type == XPC_TYPE_ERROR) {
-        if (event == XPC_ERROR_CONNECTION_INVALID) {
-            // The client process on the other end of the connection has either
-            // crashed or cancelled the connection. After receiving this error,
-            // the connection is in an invalid state, and you do not need to
-            // call xpc_connection_cancel(). Just tear down any associated state
-            // here.
-            syslog(LOG_NOTICE, "CONNECTION_INVALID");
-        } else if (event == XPC_ERROR_TERMINATION_IMMINENT) {
-            // Handle per-connection termination cleanup.
-            syslog(LOG_NOTICE, "CONNECTION_IMMINENT");
-        } else {
-            syslog(LOG_NOTICE, "Got unexpected (and unsupported) XPC ERROR");
-        }
+    if (type == XPC_TYPE_ERROR)
+    {
+        if      (event == XPC_ERROR_CONNECTION_INVALID)     { syslog(LOG_NOTICE, "CONNECTION_INVALID"); }
+        else if (event == XPC_ERROR_TERMINATION_IMMINENT)   { syslog(LOG_NOTICE, "CONNECTION_IMMINENT"); }
+        else                                                { syslog(LOG_NOTICE, "Got unexpected (and unsupported) XPC ERROR"); }
         
         if (task && [task isRunning])     // TODO: this doesnt work???
             [task terminate];
@@ -92,7 +78,9 @@
         if (!mode || !mountPoint || !repairPermissionsUtilityPath)
             exit(EXIT_FAILURE);
         
-        NSLog(@"mode = %s\nmntPoint = %s\nRepairPermissionsUtilityPath = %s", mode, mountPoint, repairPermissionsUtilityPath);
+        syslog(LOG_NOTICE, "mode: %s", mode);
+        syslog(LOG_NOTICE, "mntP: %s", mountPoint);
+        syslog(LOG_NOTICE, "path: %s", repairPermissionsUtilityPath);
         
         //
         //  Start the Operation
@@ -112,14 +100,14 @@
         [outputHandle waitForDataInBackgroundAndNotify];
         [errorHandle waitForDataInBackgroundAndNotify];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedData:) name:NSFileHandleDataAvailableNotification object:outputHandle];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedData:) name:NSFileHandleDataAvailableNotification object:errorHandle];
-        
+        [outputHandle setReadabilityHandler:^(NSFileHandle * _Nonnull fh) {
+            [self receivedData:fh];
+        }];
+        [errorHandle setReadabilityHandler:^(NSFileHandle * _Nonnull fh) {
+            [self receivedData:fh];
+        }];
+
         [task setTerminationHandler:^(NSTask *task) {
-            
-            //  NOTE: enable when using pipe
-            // [task.standardOutput fileHandleForReading].readabilityHandler = nil;
-            
             //
             //  Notify EnhandeDiskUtility RepairPermissionsUtility finished
             //
@@ -144,11 +132,6 @@
                                      });
     
     xpc_connection_resume(connection);
-}
-
-- (void)dispatchMain
-{
-    dispatch_main();
 }
 
 - (instancetype)init
@@ -182,7 +165,7 @@ int main(int argc, const char *argv[])
     if (!helper)
         return EXIT_FAILURE;
     
-    [helper dispatchMain];
+    dispatch_main();
     
     return EXIT_SUCCESS;
 }

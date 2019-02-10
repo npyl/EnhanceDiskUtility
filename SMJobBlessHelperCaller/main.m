@@ -39,23 +39,24 @@
 #import <Cocoa/Cocoa.h>
 #import <ServiceManagement/ServiceManagement.h>
 
-BOOL blessHelperWithLabel( NSString * label, NSError ** error )
+BOOL blessHelperWithLabel(NSString *label, NSError **error)
 {
     BOOL result = NO;
     
-    AuthorizationItem authItem		= { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
-    AuthorizationRights authRights	= { 1, &authItem };
+    AuthorizationItem authItem		=   { kSMRightBlessPrivilegedHelper, 0, nil, 0 };
+    AuthorizationRights authRights	=   { 1, &authItem };
     AuthorizationFlags flags		=	kAuthorizationFlagDefaults |
-                                        kAuthorizationFlagInteractionAllowed	|
-                                        kAuthorizationFlagPreAuthorize	|
+                                        kAuthorizationFlagInteractionAllowed |
+                                        kAuthorizationFlagPreAuthorize |
                                         kAuthorizationFlagExtendRights;
     
-    AuthorizationRef authRef = NULL;
+    AuthorizationRef authRef = nil;
+    CFErrorRef outError = nil;
     
     /* Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper). */
     OSStatus status = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
     if (status != errAuthorizationSuccess) {
-        NSLog( @"Failed to create AuthorizationRef. Error code: %d", (int)status );
+        NSLog(@"Failed to create AuthorizationRef. Error code: %d", (int)status);
         
     } else {
         /* This does all the work of verifying the helper tool against the application
@@ -63,8 +64,11 @@ BOOL blessHelperWithLabel( NSString * label, NSError ** error )
          * is extracted and placed in /Library/LaunchDaemons and then loaded. The
          * executable is placed in /Library/PrivilegedHelperTools.
          */
-        NSLog( @"%@", label );
-        result = SMJobBless(kSMDomainSystemLaunchd, (CFStringRef)label, authRef, (CFErrorRef *)error);
+        result = SMJobBless(kSMDomainSystemLaunchd, (CFStringRef)label, authRef, &outError);
+        
+        /* get NSError out of CFErrorRef */
+        if (*error)
+            *error = (__bridge NSError *)outError;
     }
     
     return result;
@@ -73,12 +77,10 @@ BOOL blessHelperWithLabel( NSString * label, NSError ** error )
 int main(int argc, const char * argv[]) {
     NSError *error = nil;
     
-    if ( !blessHelperWithLabel( @"org.npyl.EnhanceDiskUtility.SMJobBlessHelper", &error ) ) {
-        NSLog( @"Failed to bless helper. Error: %@", error );
+    if (!blessHelperWithLabel(@"org.npyl.EnhanceDiskUtility.SMJobBlessHelper", &error)) {
+        NSLog(@"Failed to bless helper. Error: %@", error);
         return -1;
     }
-    
-    NSLog( @"Helper available." );
-    
+
     return 0;
 }
