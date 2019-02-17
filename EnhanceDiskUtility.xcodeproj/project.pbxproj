@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0996E4CF21068B98009B5E82 /* AMR_ANSIEscapeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0996E4CE21068B98009B5E82 /* AMR_ANSIEscapeHelper.m */; };
 		0996E4D321068BD9009B5E82 /* NSAlert+runModalSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 0996E4D121068BD9009B5E82 /* NSAlert+runModalSheet.m */; };
+		09C01B912219C651000BBE1A /* GeneralSheetController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C01B8F2219C651000BBE1A /* GeneralSheetController.m */; };
+		09C01B922219C8A4000BBE1A /* VerifyRepairPermissions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7786EE511F35E0A0001B6B5F /* VerifyRepairPermissions.xib */; };
 		77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */; };
 		7746F04E1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7746F04D1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m */; };
 		775420FB1EF568AF0071FBEB /* ZKSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 775420FA1EF568AF0071FBEB /* ZKSwizzle.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -17,7 +19,6 @@
 		7778613E1F34E8E4007B145C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7778613D1F34E8E4007B145C /* main.m */; };
 		7778614C1F34E8F5007B145C /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = 77F76DC91F34D82B00ADAD8B /* org.npyl.EnhanceDiskUtility.SMJobBlessHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		7778614D1F34E928007B145C /* SMJobBlessHelperCaller.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 777861371F34E8E4007B145C /* SMJobBlessHelperCaller.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		7786EE521F35E0A0001B6B5F /* VerifyRepairPermissions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7786EE511F35E0A0001B6B5F /* VerifyRepairPermissions.xib */; };
 		77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 77A79E481F311C850041D107 /* RepairPermissionsUtility_LICENSE */; };
 		77DB43721EF47ADD00B1067C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DB43711EF47ADD00B1067C /* main.m */; };
 		77F76DD31F34D99500ADAD8B /* SMJobBlessHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 77DBCD0B1F32189A00186770 /* SMJobBlessHelper.m */; };
@@ -52,6 +53,8 @@
 		0996E4CE21068B98009B5E82 /* AMR_ANSIEscapeHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMR_ANSIEscapeHelper.m; sourceTree = "<group>"; };
 		0996E4D121068BD9009B5E82 /* NSAlert+runModalSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSAlert+runModalSheet.m"; path = "EnhanceDiskUtility/Extensions/NSAlert+runModalSheet.m"; sourceTree = SOURCE_ROOT; };
 		0996E4D221068BD9009B5E82 /* NSAlert+runModalSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSAlert+runModalSheet.h"; path = "EnhanceDiskUtility/Extensions/NSAlert+runModalSheet.h"; sourceTree = SOURCE_ROOT; };
+		09C01B8F2219C651000BBE1A /* GeneralSheetController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneralSheetController.m; sourceTree = "<group>"; };
+		09C01B902219C651000BBE1A /* GeneralSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneralSheetController.h; sourceTree = "<group>"; };
 		77274C5A1EF6BAB000243954 /* ZKSwizzle_LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ZKSwizzle_LICENSE; path = ZKSwizzle/ZKSwizzle_LICENSE; sourceTree = "<group>"; };
 		7746F04C1F3B234C0034FD11 /* DUEVerifyRepairSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DUEVerifyRepairSheetController.h; sourceTree = "<group>"; };
 		7746F04D1F3B234C0034FD11 /* DUEVerifyRepairSheetController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DUEVerifyRepairSheetController.m; sourceTree = "<group>"; };
@@ -121,6 +124,15 @@
 			path = "New Group";
 			sourceTree = "<group>";
 		};
+		09C01B8E2219C643000BBE1A /* GeneralSheetController */ = {
+			isa = PBXGroup;
+			children = (
+				09C01B902219C651000BBE1A /* GeneralSheetController.h */,
+				09C01B8F2219C651000BBE1A /* GeneralSheetController.m */,
+			);
+			path = GeneralSheetController;
+			sourceTree = "<group>";
+		};
 		77274C5E1EF6D49000243954 /* ZKSwizzle */ = {
 			isa = PBXGroup;
 			children = (
@@ -182,6 +194,7 @@
 		77DB436A1EF47AC800B1067C /* EnhanceDiskUtility */ = {
 			isa = PBXGroup;
 			children = (
+				09C01B8E2219C643000BBE1A /* GeneralSheetController */,
 				0996E4D021068BBC009B5E82 /* Extensions */,
 				EC44307F204B5475006C4504 /* Supporting Files */,
 				77A79E451F311ACC0041D107 /* Resources */,
@@ -337,7 +350,7 @@
 				7766D7A31F49F45800DCA444 /* RepairPermissionsUtility in Resources */,
 				77274C5B1EF6BAB000243954 /* ZKSwizzle_LICENSE in Resources */,
 				77A79E491F311C850041D107 /* RepairPermissionsUtility_LICENSE in Resources */,
-				7786EE521F35E0A0001B6B5F /* VerifyRepairPermissions.xib in Resources */,
+				09C01B922219C8A4000BBE1A /* VerifyRepairPermissions.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +369,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09C01B912219C651000BBE1A /* GeneralSheetController.m in Sources */,
 				0996E4CF21068B98009B5E82 /* AMR_ANSIEscapeHelper.m in Sources */,
 				0996E4D321068BD9009B5E82 /* NSAlert+runModalSheet.m in Sources */,
 				77DB43721EF47ADD00B1067C /* main.m in Sources */,

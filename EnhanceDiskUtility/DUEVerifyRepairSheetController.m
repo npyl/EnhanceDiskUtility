@@ -8,9 +8,12 @@
 
 #import "DUEVerifyRepairSheetController.h"
 #import "ANSIEscapeHelper/AMR_ANSIEscapeHelper.h"
+#import "GeneralSheetController/GeneralSheetController.h"
 
 
 @implementation DUEVerifyRepairSheetController
+
+NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
 
 - (void)log:(NSString *)string
 {
@@ -88,8 +91,6 @@
     [self log:[NSString stringWithFormat:@"\033[31m%@", str]];
 }
 
-NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
-
 - (void)executeUtilityWithArguments:(NSArray*)arguments
 {
     /*
@@ -151,7 +152,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
     if (!connection)
     {
         NSLog(@"Failed to create XPC connection.");
-        [self log:@"Failed to create XPC connection."];     // XXX this should be RED
+        [self logError:@"Failed to create XPC connection."];
         return;
     }
     
@@ -263,14 +264,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
             NSLog(@"DUE: Unexpected sheetIdentifier passed! Aborting! Why did this even happen?");
             break;
     }
-    
-    if (!_sheet)
-        [[NSBundle bundleWithIdentifier:kEnhanceDiskUtilityBundleIdentifier] loadNibNamed:@"VerifyRepairPermissions" owner:self topLevelObjects:nil];
-    
-    [[NSApp mainWindow] beginSheet:self.sheet completionHandler:^(NSModalResponse returnCode) {
-        [[NSApp mainWindow] endSheet:self.sheet];
-    }];
-    
+
     [_progressIndicator startAnimation:nil];
     
     /*
@@ -281,7 +275,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
 
 - (IBAction)closeSheet:(id)sender
 {
-    [self.sheet close];
+    [self close];
     
     //
     //  End the connection

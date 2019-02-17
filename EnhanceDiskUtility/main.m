@@ -120,7 +120,8 @@ char * _csr_check(int aMask, bool aFlipflag)
     
     NSString *mountPoint = ZKHookIvar(globalSelectedDiskHandle, NSString*, "_mountPoint");
     
-    DUEVerifyRepairSheetController *verifySheet = [[DUEVerifyRepairSheetController alloc] init];
+    DUEVerifyRepairSheetController *verifySheet = [[DUEVerifyRepairSheetController alloc] initWithWindowNibName:@"VerifyRepairPermissions"];
+    [verifySheet loadOnWindow:[NSApp mainWindow]];
     [verifySheet showSheet:kVerifySheetIdentifier forMountPoint:mountPoint];
 }
 
@@ -154,7 +155,8 @@ char * _csr_check(int aMask, bool aFlipflag)
     
     NSString *mountPoint = ZKHookIvar(globalSelectedDiskHandle, NSString*, "_mountPoint");
     
-    DUEVerifyRepairSheetController *repairSheet = [[DUEVerifyRepairSheetController alloc] init];
+    DUEVerifyRepairSheetController *repairSheet = [[DUEVerifyRepairSheetController alloc] initWithWindowNibName:@"VerifyRepairPermissions"];
+    [repairSheet loadOnWindow:[NSApp mainWindow]];
     [repairSheet showSheet:kRepairSheetIdentifier forMountPoint:mountPoint];
 }
 

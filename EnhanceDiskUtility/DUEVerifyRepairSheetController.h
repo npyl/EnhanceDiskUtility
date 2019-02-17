@@ -7,18 +7,18 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "GeneralSheetController/GeneralSheetController.h"
 
 enum {
     kVerifySheetIdentifier,
     kRepairSheetIdentifier,
 };
 
-@interface DUEVerifyRepairSheetController : NSObject
+@interface DUEVerifyRepairSheetController : GeneralSheetController
 {
     xpc_connection_t connection;
 }
 
-@property (assign) IBOutlet NSWindow *sheet;
 @property (unsafe_unretained) IBOutlet NSTextView *logView;
 @property (assign) IBOutlet NSButton *doneButton;
 @property (assign) IBOutlet NSProgressIndicator *progressIndicator;
