@@ -79,17 +79,6 @@
         [attrStr appendAttributedString:[ansiEscapeHelper attributedStringWithANSIEscapedString:string]];
         
         [[self->_logView textStorage] setAttributedString:attrStr];
-        
-//        NSMutableAttributedString *tmp =
-//
-//        /* append new-ly converted string */
-//        [tmp appendAttributedString:[ansiEscapeHelper attributedStringWithANSIEscapedString:string]];
-//
-//        _logView.attributedStringValue = tmp;
-        
-        /*
-         * XXX if we reach an end of view flush the previous lines of the string so that we not hit an overflow
-         */
     });
     
 }
@@ -101,9 +90,6 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
     /*
      *  Find Bundle Folder
      */
-    
-    [self log:@"\033[31mHELLOv2"];
-    
     NSBundle *mainBundle = [NSBundle bundleWithIdentifier:kEnhanceDiskUtilityBundleIdentifier];
     NSString *bundleResources = [mainBundle resourcePath];
     
@@ -137,7 +123,10 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
              * to return 0 if it succeded in launching the Helper
              */
             if ([task terminationStatus] != 0)
+            {
+                [self->_progressIndicator stopAnimation:nil];
                 return;
+            }
         }
         @catch (NSException *exception)
         {
@@ -164,13 +153,9 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
         
         if (type == XPC_TYPE_ERROR)
         {
-            if (event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-                NSLog(@"XPC connection interupted.");
-            } else if (event == XPC_ERROR_CONNECTION_INVALID) {
-                NSLog(@"XPC connection invalid, releasing.");
-            } else {
-                NSLog(@"Unexpected XPC connection error.");
-            }
+            if (event == XPC_ERROR_CONNECTION_INTERRUPTED)  { NSLog(@"XPC connection interupted."); }
+            else if (event == XPC_ERROR_CONNECTION_INVALID) { NSLog(@"XPC connection invalid, releasing."); }
+            else                                            { NSLog(@"Unexpected XPC connection error."); }
             
             if (!finishedSuccessfully)
             {
