@@ -83,6 +83,11 @@
     
 }
 
+- (void)logError:(NSString *)str
+{
+    [self log:[NSString stringWithFormat:@"\033[31m%@", str]];
+}
+
 NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
 
 - (void)executeUtilityWithArguments:(NSArray*)arguments
@@ -124,13 +129,15 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
              */
             if ([task terminationStatus] != 0)
             {
+                [self logError:@"Failed to get administrator rights; aborting verify/repair."];
                 [self->_progressIndicator stopAnimation:nil];
                 return;
             }
         }
         @catch (NSException *exception)
         {
-            [self log:@"Ooops!"];
+            [self logError:@"Internal Error, please open an issue in Github."];
+            [self logError:[NSString stringWithFormat:@"Exception: %@", exception.reason]];
         }
     }
     
@@ -159,7 +166,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
             
             if (!finishedSuccessfully)
             {
-                [self log:@"\n\n \033[31mFailed to Repair/Verify Permissions; XPC connection problem"];
+                [self logError:@"Failed to Repair/Verify Permissions; XPC connection problem"];
             }
             
             [self->_progressIndicator stopAnimation:nil];
@@ -188,7 +195,7 @@ NSString *kEnhanceDiskUtilityBundleIdentifier = @"ulcheats.EnhanceDiskUtility";
                 else
                 {
                     NSLog(@"DUE: Error! RepairPermissionsUtility exited with status:%lld", terminationStatus);
-                    [self log:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
+                    [self logError:@"RepairPermissions utility run into a problem! Check Console.app for more information."];
                 }
                 
                 [self->_progressIndicator stopAnimation:nil];
