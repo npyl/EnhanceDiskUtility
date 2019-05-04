@@ -1,4 +1,5 @@
-# EnhanceDiskUtility
+# EnhanceDiskUtility [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
+
 mySIMBL plugin for Disk Utility that aims to enable the removed Verify / Repair Permissions support
 
 # Installation
@@ -22,6 +23,8 @@ Then double-click it and it will be installed to mySIMBL. Just make sure it has 
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NSV636CUWX754)
 
-# License
+# LICENSE
 
-MIT License!
+Dual-Licensed under [996ICU License](https://github.com/996icu/996.ICU/blob/master/LICENSE) and [MIT License](https://raw.githubusercontent.com/npyl/EnhanceDiskUtility/master/LICENSE).
+
+By using this project as a company (or even person), you agree that your company (or yourself) will use the project while abiding to the labor rules of your country's.  For more info, and specific law matters carefully read the 996ICU License.
